@@ -14,4 +14,10 @@ export default defineConfig({
     tanstackStart({ customViteReactPlugin: true }),
     viteReact(),
   ],
+  define: {
+    global: 'globalThis',
+  },
+  ssr: {
+    noExternal: process.env.NODE_ENV === 'production' ? true : undefined,
+  },
 })
