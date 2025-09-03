@@ -23,7 +23,7 @@ function MonthlyBudgetPage() {
 
   return (
     <ErrorBoundary>
-      <div className="pt-6 pb-12 px-2 space-y-4 relative">
+      <div className="space-y-4 relative">
         <MonthlyHeader
           viewType={viewType}
           onToggleViewType={handleToggleViewType}

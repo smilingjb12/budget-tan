@@ -9,7 +9,7 @@ import { cn, formatCurrency } from "~/lib/utils";
 import { format } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useExpensesVsIncomeQuery } from "~/lib/queries";
 
 const months = [
@@ -54,6 +54,15 @@ export function MonthYearPicker({
   );
 
   const [open, setOpen] = useState(false);
+
+  // Update state when props change (when navigating between months)
+  useEffect(() => {
+    if (initialMonth && initialYear) {
+      const newDate = new Date(initialYear, initialMonth - 1);
+      setSelectedDate(newDate);
+      setViewDate(newDate);
+    }
+  }, [initialMonth, initialYear]);
 
   const { data: expensesVsIncomeData, isLoading } = useExpensesVsIncomeQuery();
 

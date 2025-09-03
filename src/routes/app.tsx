@@ -77,7 +77,9 @@ function MobileBottomNav() {
 function AppLayout() {
   return (
     <div className="min-h-screen pb-16 md:pb-0">
-      <Outlet />
+      <div className="pt-6 pb-12 px-4">
+        <Outlet />
+      </div>
       <MobileBottomNav />
     </div>
   )

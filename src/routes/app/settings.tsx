@@ -8,8 +8,8 @@ export const Route = createFileRoute('/app/settings')({
 
 function SettingsPage() {
   return (
-    <div className="py-1 space-y-4">
-      <h1 className="text-xl font-bold mb-6 px-4">Settings</h1>
+    <div className="space-y-4">
+      <h1 className="text-xl font-bold mb-6">Settings</h1>
       <Card>
         <CardHeader>
           <CardTitle>Regular Payments</CardTitle>
