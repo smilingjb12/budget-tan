@@ -9,7 +9,6 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -238,26 +237,13 @@ export function IncomeTrendsChart() {
     };
   }, [incomeTrendsData, updateVisibleData]);
 
-  // Get year dividers for the chart
-  const getYearDividers = () => {
-    if (!incomeTrendsData.data?.length) return [];
 
-    // Find indices where the year changes
-    return incomeTrendsData.data
-      .filter((item) => item.isFirstMonthOfYear)
-      .map((item) => ({
-        yearMonth: item.yearMonth,
-        year: item.year,
-      }));
-  };
-
-  const yearDividers = getYearDividers();
 
   // Custom tooltip for the stacked bar chart
-  const CustomTooltip = (props: any) => {
+  const CustomTooltip = (props: { active?: boolean; payload?: Array<{ name: string; value: number; color: string; payload: IncomeDataPoint }>; label?: string }) => {
     const { active, payload, label } = props;
     if (active && payload && payload.length > 0) {
-      const dataPoint = payload[0].payload as IncomeDataPoint;
+      const dataPoint = payload[0].payload;
       
       return (
         <div className="bg-background/90 p-2 border border-border rounded-md shadow-md text-xs">
@@ -265,8 +251,8 @@ export function IncomeTrendsChart() {
           <p className="font-semibold text-primary mb-1">{`Total: ${formatCurrency(dataPoint.total)}`}</p>
           <div className="space-y-1">
             {payload
-              .filter((entry: any) => entry.value > 0)
-              .map((entry: any, index: number) => (
+              .filter((entry) => entry.value > 0)
+              .map((entry, index) => (
                 <div key={`item-${index}`} className="flex items-center gap-2">
                   <div
                     className="w-3 h-3 rounded-full"

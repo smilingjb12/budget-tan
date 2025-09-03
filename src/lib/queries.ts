@@ -1,6 +1,4 @@
-import { CategoryDto } from "~/services/category-service";
 import {
-  AllTimeSummaryDto,
   MonthSummaryDto,
   RecordDto,
   CreateOrUpdateRecordRequest,
@@ -363,7 +361,7 @@ export function useCategoryExpensesQuery(categoryId: number) {
         const response = await getCategoryExpenses({ data: { categoryId } });
         console.log("Category expenses response:", response);
         // TanStack Start server functions wrap response in { result: data }
-        return (response as any)?.result || response || [];
+        return (response as unknown as { result: MonthlyTotalsDto[] })?.result || (response as MonthlyTotalsDto[]) || [];
       } catch (error) {
         console.error("Category expenses query error:", error);
         return [];
@@ -381,7 +379,7 @@ export function useMonthlyExpensesVsIncomeQuery() {
         const response = await getMonthlyExpensesVsIncome({});
         console.log("Monthly expenses vs income response:", response);
         // TanStack Start server functions wrap response in { result: data }
-        return (response as any)?.result || response || [];
+        return (response as unknown as { result: MonthlyExpensesVsIncomeDto[] })?.result || (response as MonthlyExpensesVsIncomeDto[]) || [];
       } catch (error) {
         console.error("Monthly expenses vs income query error:", error);
         return [];
@@ -398,7 +396,7 @@ export function useIncomeTrendsQuery() {
         const response = await getIncomeTrends({});
         console.log("Income trends response:", response);
         // TanStack Start server functions wrap response in { result: data }
-        return (response as any)?.result || response || [];
+        return (response as unknown as { result: IncomeTrendsDto[] })?.result || (response as IncomeTrendsDto[]) || [];
       } catch (error) {
         console.error("Income trends query error:", error);
         return [];

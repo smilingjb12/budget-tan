@@ -1,4 +1,3 @@
-import { AllTimeSummaryDto } from "~/services/record-service";
 import { MonthYearPicker } from "~/components/month-year-picker";
 import { Button } from "~/components/ui/button";
 import { useAllTimeSummaryQuery } from "~/lib/queries";

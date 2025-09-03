@@ -64,7 +64,7 @@ export function MonthYearPicker({
     }
   }, [initialMonth, initialYear]);
 
-  const { data: expensesVsIncomeData, isLoading } = useExpensesVsIncomeQuery();
+  const { data: expensesVsIncomeData } = useExpensesVsIncomeQuery();
 
   // Helper function to get profit (income - expenses) for a specific month
   const getProfitForMonth = (year: number, monthIndex: number) => {

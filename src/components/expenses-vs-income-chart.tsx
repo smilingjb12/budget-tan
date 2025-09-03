@@ -13,7 +13,6 @@ import {
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
-  TooltipProps,
   XAxis,
   YAxis,
 } from "recharts";
@@ -155,7 +154,7 @@ export function ExpensesVsIncomeChart() {
   const yearDividers = getYearDividers();
 
   // Custom tooltip to show the difference and its components
-  const CustomTooltip = (props: any) => {
+  const CustomTooltip = (props: { active?: boolean; payload?: Array<{ payload: ExpenseIncomeDataPoint }>; label?: string }) => {
     const { active, payload, label } = props;
     if (active && payload && payload.length > 0) {
       const dataPoint = payload[0].payload as ExpenseIncomeDataPoint;

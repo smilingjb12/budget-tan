@@ -12,7 +12,6 @@ import {
   Legend,
   ResponsiveContainer,
   Tooltip,
-  TooltipProps,
   XAxis,
   YAxis,
 } from "recharts";
@@ -148,7 +147,7 @@ export function IncomeByYearChart() {
   const incomeTrendsData = rawIncomeTrendsData && Array.isArray(rawIncomeTrendsData) ? transformIncomeTrendsToYearly(rawIncomeTrendsData) : { data: [], categories: [] };
 
   // Custom tooltip for the stacked bar chart
-  const CustomTooltip = (props: any) => {
+  const CustomTooltip = (props: { active?: boolean; payload?: TooltipPayloadItem[]; label?: string }) => {
     const { active, payload, label } = props;
     if (active && payload && payload.length > 0) {
       const typedPayload = payload as TooltipPayloadItem[];

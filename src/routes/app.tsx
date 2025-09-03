@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { cn } from "~/lib/utils";
 import { History, LineChart, Settings2 } from "lucide-react";
-import { Link, useRouter, useLocation } from "@tanstack/react-router";
+import { useRouter, useLocation } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/app")({
   component: AppLayout,

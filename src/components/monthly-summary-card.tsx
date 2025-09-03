@@ -1,13 +1,9 @@
-import { CategoryDto } from "~/services/category-service";
-import { MonthSummaryDto } from "~/services/record-service";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { useMonthNavigation } from "~/lib/hooks/use-month-navigation";
 import { useMonthSummaryQuery, useCategoriesQuery } from "~/lib/queries";
-import { QueryKeys } from "~/lib/query-keys";
 import { Month, Routes } from "~/lib/routes";
 import { formatUSD } from "~/lib/utils";
-import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter, useParams } from "@tanstack/react-router";
