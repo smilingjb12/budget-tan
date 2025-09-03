@@ -135,7 +135,6 @@ export const getExpensesVsIncome = createServerFn({
   "use server";
   try {
     const result = await RecordService.getExpensesVsIncome();
-    console.log("getExpensesVsIncome result:", JSON.stringify(result, null, 2));
     return result;
   } catch (error) {
     throw new Error(
