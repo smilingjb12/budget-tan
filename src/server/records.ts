@@ -13,27 +13,13 @@ export const getMonthSummary = createServerFn({
     month,
   }))
   .handler(async ({ data: { year, month } }) => {
-    "use server";
-    try {
-      return await RecordService.getMonthSummary(year, month);
-    } catch (error) {
-      throw new Error(
-        `Failed to fetch month summary: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
-    }
+    return await RecordService.getMonthSummary(year, month);
   });
 
 export const getAllTimeSummary = createServerFn({
   method: "GET",
 }).handler(async () => {
-  "use server";
-  try {
-    return await RecordService.getAllTimeSummary();
-  } catch (error) {
-    throw new Error(
-      `Failed to fetch all time summary: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
-  }
+  return await RecordService.getAllTimeSummary();
 });
 
 export const getRecordsByMonth = createServerFn({
@@ -44,14 +30,7 @@ export const getRecordsByMonth = createServerFn({
     month,
   }))
   .handler(async ({ data: { year, month } }) => {
-    "use server";
-    try {
-      return await RecordService.getRecordsByMonth(year, month);
-    } catch (error) {
-      throw new Error(
-        `Failed to fetch records: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
-    }
+    return await RecordService.getRecordsByMonth(year, month);
   });
 
 export const getRecordById = createServerFn({
@@ -59,14 +38,7 @@ export const getRecordById = createServerFn({
 })
   .validator(({ id }: { id: number }) => ({ id }))
   .handler(async ({ data: { id } }) => {
-    "use server";
-    try {
-      return await RecordService.getRecordById(id);
-    } catch (error) {
-      throw new Error(
-        `Failed to fetch record: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
-    }
+    return await RecordService.getRecordById(id);
   });
 
 export const createRecord = createServerFn({
@@ -74,14 +46,7 @@ export const createRecord = createServerFn({
 })
   .validator((data: CreateOrUpdateRecordRequest) => data)
   .handler(async ({ data }) => {
-    "use server";
-    try {
-      return await RecordService.createRecord(data);
-    } catch (error) {
-      throw new Error(
-        `Failed to create record: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
-    }
+    return await RecordService.createRecord(data);
   });
 
 export const updateRecord = createServerFn({
@@ -89,14 +54,7 @@ export const updateRecord = createServerFn({
 })
   .validator((data: CreateOrUpdateRecordRequest) => data)
   .handler(async ({ data }) => {
-    "use server";
-    try {
-      return await RecordService.updateRecord(data);
-    } catch (error) {
-      throw new Error(
-        `Failed to update record: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
-    }
+    return await RecordService.updateRecord(data);
   });
 
 export const deleteRecord = createServerFn({
@@ -104,14 +62,7 @@ export const deleteRecord = createServerFn({
 })
   .validator(({ id }: { id: number }) => ({ id }))
   .handler(async ({ data: { id } }) => {
-    "use server";
-    try {
-      return await RecordService.deleteRecord(id);
-    } catch (error) {
-      throw new Error(
-        `Failed to delete record: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
-    }
+    return await RecordService.deleteRecord(id);
   });
 
 export const searchRecordComments = createServerFn({
@@ -119,26 +70,12 @@ export const searchRecordComments = createServerFn({
 })
   .validator(({ comment }: { comment: string }) => ({ comment }))
   .handler(async ({ data: { comment } }) => {
-    "use server";
-    try {
-      return await RecordService.searchRecordComments(comment);
-    } catch (error) {
-      throw new Error(
-        `Failed to search comments: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
-    }
+    return await RecordService.searchRecordComments(comment);
   });
 
 export const getExpensesVsIncome = createServerFn({
   method: "GET",
 }).handler(async () => {
-  "use server";
-  try {
-    const result = await RecordService.getExpensesVsIncome();
-    return result;
-  } catch (error) {
-    throw new Error(
-      `Failed to fetch expenses vs income data: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
-  }
+  const result = await RecordService.getExpensesVsIncome();
+  return result;
 });

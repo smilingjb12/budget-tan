@@ -5,14 +5,12 @@ import { ChartsService } from '~/services/charts-service'
 export const getCategoryExpenses = createServerFn({ method: 'GET' })
   .validator(({ categoryId }: { categoryId: number }) => ({ categoryId }))
   .handler(async ({ data: { categoryId } }) => {
-    'use server'
     return await ChartsService.getMonthlyTotalsByCategory(categoryId)
   })
 
 // Get monthly expenses vs income data
 export const getMonthlyExpensesVsIncome = createServerFn({ method: 'GET' }).handler(
   async () => {
-    'use server'
     return await ChartsService.getMonthlyExpensesVsIncome()
   }
 )
@@ -20,7 +18,6 @@ export const getMonthlyExpensesVsIncome = createServerFn({ method: 'GET' }).hand
 // Get income trends by categories
 export const getIncomeTrends = createServerFn({ method: 'GET' }).handler(
   async () => {
-    'use server'
     return await ChartsService.getMonthlyIncomeByCategories()
   }
 )
