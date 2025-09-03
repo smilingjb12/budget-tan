@@ -24,13 +24,13 @@ export function RegularPaymentsList() {
   );
 
   useEffect(() => {
-    if (regularPayments) {
+    if (regularPayments && Array.isArray(regularPayments)) {
       // Sort payments by amount in descending order
-      const sortedPayments = [...regularPayments].sort(
-        (a, b) => b.amount - a.amount
+      const sortedPayments = [...(regularPayments as RegularPaymentDto[])].sort(
+        (a: RegularPaymentDto, b: RegularPaymentDto) => b.amount - a.amount
       );
       setPayments(sortedPayments);
-      setOriginalPayments(sortedPayments.map((payment) => ({ ...payment })));
+      setOriginalPayments(sortedPayments.map((payment: RegularPaymentDto) => ({ ...payment })));
       calculateTotal(sortedPayments);
     }
   }, [regularPayments]);
@@ -43,7 +43,7 @@ export function RegularPaymentsList() {
   const getTextColor = (value: number, data: RegularPaymentDto[]) => {
     if (!data || data.length === 0) return "hsl(var(--primary))";
 
-    const values = data.map((item) => item.amount);
+    const values = data.map((item: RegularPaymentDto) => item.amount);
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
     const range = maxValue - minValue;
@@ -99,27 +99,27 @@ export function RegularPaymentsList() {
       date: new Date().toISOString(),
     };
 
-    const updatedPayments = [...payments, newPayment];
+    const updatedPayments: RegularPaymentDto[] = [...payments, newPayment];
     setPayments(updatedPayments);
     calculateTotal(updatedPayments);
   };
 
   const handleRemovePayment = (index: number) => {
-    const updatedPayments = [...payments];
+    const updatedPayments: RegularPaymentDto[] = [...payments];
     updatedPayments.splice(index, 1);
     setPayments(updatedPayments);
     calculateTotal(updatedPayments);
   };
 
   const handleNameChange = (index: number, value: string) => {
-    const updatedPayments = [...payments];
-    updatedPayments[index].name = value;
+    const updatedPayments: RegularPaymentDto[] = [...payments];
+    updatedPayments[index]!.name = value;
     setPayments(updatedPayments);
   };
 
   const handleAmountChange = (index: number, value: string) => {
-    const updatedPayments = [...payments];
-    updatedPayments[index].amount = parseFloat(value) || 0;
+    const updatedPayments: RegularPaymentDto[] = [...payments];
+    updatedPayments[index]!.amount = parseFloat(value) || 0;
     setPayments(updatedPayments);
     calculateTotal(updatedPayments);
   };
@@ -128,7 +128,7 @@ export function RegularPaymentsList() {
     updateMutation.mutate(payments, {
       onSuccess: () => {
         setIsEditMode(false);
-        setOriginalPayments(payments.map((payment) => ({ ...payment })));
+        setOriginalPayments(payments.map((payment: RegularPaymentDto) => ({ ...payment })));
       },
     });
   };
@@ -138,7 +138,7 @@ export function RegularPaymentsList() {
   };
 
   const handleCancelEdit = () => {
-    setPayments(originalPayments.map((payment) => ({ ...payment })));
+    setPayments(originalPayments.map((payment: RegularPaymentDto) => ({ ...payment })));
     calculateTotal(originalPayments);
     setIsEditMode(false);
   };
@@ -155,7 +155,7 @@ export function RegularPaymentsList() {
     <>
       <CardContent>
         <div className="space-y-4">
-          {payments.map((payment, index) => (
+          {payments.map((payment: RegularPaymentDto, index: number) => (
             <div key={index} className="flex items-start space-x-2">
               {isEditMode ? (
                 <>

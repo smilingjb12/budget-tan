@@ -1,6 +1,9 @@
 import { createServerFn } from '@tanstack/react-start'
 import { RegularPaymentService, RegularPaymentDto } from '~/services/regular-payment-service'
 
+// Export the type for use in other files
+export type { RegularPaymentDto }
+
 // Get all regular payments
 export const getRegularPayments = createServerFn({ method: 'GET' }).handler(
   async () => {

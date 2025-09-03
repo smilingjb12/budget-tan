@@ -27,8 +27,8 @@ import { getExchangeRate } from "~/server/exchange-rate";
 import {
   getRegularPayments,
   saveRegularPayments,
-  RegularPaymentDto,
 } from "~/server/regular-payments";
+import { RegularPaymentDto } from "~/services/regular-payment-service";
 import {
   getCategoryExpenses,
   getMonthlyExpensesVsIncome,
@@ -41,7 +41,7 @@ import {
 } from "~/services/charts-service";
 
 // Re-export types
-export type { RegularPaymentDto } from "~/server/regular-payments";
+export type { RegularPaymentDto };
 export type {
   MonthlyTotalsDto,
   MonthlyExpensesVsIncomeDto,
@@ -317,11 +317,11 @@ export function useExpensesVsIncomeQuery() {
 export function useRegularPaymentsQuery() {
   return useQuery<RegularPaymentDto[]>({
     queryKey: QueryKeys.regularPayments(),
-    queryFn: async () => {
+    queryFn: async (): Promise<RegularPaymentDto[]> => {
       try {
         const response = await getRegularPayments({});
         console.log("Regular payments response:", response);
-        return response || [];
+        return (response as RegularPaymentDto[]) || [];
       } catch (error) {
         console.error("Regular payments query error:", error);
         return [];
@@ -334,12 +334,12 @@ export function useUpdateRegularPaymentsMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payments: RegularPaymentDto[]) => {
+    mutationFn: async (payments: RegularPaymentDto[]): Promise<{ success: boolean }> => {
       try {
         console.log("Updating regular payments:", payments);
         const response = await saveRegularPayments({ data: payments });
         console.log("Update regular payments response:", response);
-        return response;
+        return response as { success: boolean };
       } catch (error) {
         console.error("Update regular payments mutation error:", error);
         throw error;
@@ -361,7 +361,11 @@ export function useCategoryExpensesQuery(categoryId: number) {
         const response = await getCategoryExpenses({ data: { categoryId } });
         console.log("Category expenses response:", response);
         // TanStack Start server functions wrap response in { result: data }
-        return (response as unknown as { result: MonthlyTotalsDto[] })?.result || (response as MonthlyTotalsDto[]) || [];
+        return (
+          (response as unknown as { result: MonthlyTotalsDto[] })?.result ||
+          (response as MonthlyTotalsDto[]) ||
+          []
+        );
       } catch (error) {
         console.error("Category expenses query error:", error);
         return [];
@@ -379,7 +383,12 @@ export function useMonthlyExpensesVsIncomeQuery() {
         const response = await getMonthlyExpensesVsIncome({});
         console.log("Monthly expenses vs income response:", response);
         // TanStack Start server functions wrap response in { result: data }
-        return (response as unknown as { result: MonthlyExpensesVsIncomeDto[] })?.result || (response as MonthlyExpensesVsIncomeDto[]) || [];
+        return (
+          (response as unknown as { result: MonthlyExpensesVsIncomeDto[] })
+            ?.result ||
+          (response as MonthlyExpensesVsIncomeDto[]) ||
+          []
+        );
       } catch (error) {
         console.error("Monthly expenses vs income query error:", error);
         return [];
@@ -396,7 +405,11 @@ export function useIncomeTrendsQuery() {
         const response = await getIncomeTrends({});
         console.log("Income trends response:", response);
         // TanStack Start server functions wrap response in { result: data }
-        return (response as unknown as { result: IncomeTrendsDto[] })?.result || (response as IncomeTrendsDto[]) || [];
+        return (
+          (response as unknown as { result: IncomeTrendsDto[] })?.result ||
+          (response as IncomeTrendsDto[]) ||
+          []
+        );
       } catch (error) {
         console.error("Income trends query error:", error);
         return [];

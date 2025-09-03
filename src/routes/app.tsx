@@ -2,6 +2,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { cn } from "~/lib/utils";
 import { History, LineChart, Settings2 } from "lucide-react";
 import { useRouter, useLocation } from "@tanstack/react-router";
+import { RouteMatchers, Routes, type Month } from "~/lib/routes";
 
 export const Route = createFileRoute("/app")({
   component: AppLayout,
@@ -34,14 +35,9 @@ function MobileBottomNav() {
   const location = useLocation();
   const pathname = location.pathname;
 
-  const isHistory =
-    pathname.includes("/app/") &&
-    !pathname.includes("/app/charts") &&
-    !pathname.includes("/app/settings") &&
-    !pathname.includes("/app/import");
-
-  const isCharts = pathname.includes("/app/charts");
-  const isSettings = pathname.includes("/app/settings");
+  const isHistory = RouteMatchers.isHistoryRoute(pathname);
+  const isCharts = RouteMatchers.isChartsRoute(pathname);
+  const isSettings = RouteMatchers.isSettingsRoute(pathname);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t bg-background">
@@ -54,20 +50,20 @@ function MobileBottomNav() {
             const now = new Date();
             const year = now.getFullYear();
             const month = now.getMonth() + 1;
-            router.navigate({ to: `/app/${year}/${month}` });
+            router.navigate({ to: Routes.monthlyExpensesSummary(year, month as Month) });
           }}
         />
         <BottomNavItem
           icon={<LineChart size={24} />}
           label="Charts"
           isActive={isCharts}
-          onClick={() => router.navigate({ to: "/app/charts" })}
+          onClick={() => router.navigate({ to: Routes.charts() })}
         />
         <BottomNavItem
           icon={<Settings2 size={24} />}
           label="Settings"
           isActive={isSettings}
-          onClick={() => router.navigate({ to: "/app/settings" })}
+          onClick={() => router.navigate({ to: Routes.settings() })}
         />
       </nav>
     </div>
