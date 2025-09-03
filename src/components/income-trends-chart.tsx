@@ -110,65 +110,13 @@ function transformIncomeTrendsForChart(data: IncomeTrendsDto[]) {
 export function IncomeTrendsChart() {
   const { data: rawIncomeTrendsData, isLoading } = useIncomeTrendsQuery();
   const [hasInitiallyScrolled, setHasInitiallyScrolled] = useState(false);
-
-  // Extra safety checks
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Income Trends</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px] flex items-center justify-center">
-            <p className="text-muted-foreground">Loading chart data...</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!rawIncomeTrendsData || !Array.isArray(rawIncomeTrendsData) || rawIncomeTrendsData.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Income Trends</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px] flex items-center justify-center">
-            <p className="text-muted-foreground">No income data available</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const incomeTrendsData = transformIncomeTrendsForChart(rawIncomeTrendsData);
-  
-  // Additional safety check after transformation
-  if (!incomeTrendsData.data || incomeTrendsData.data.length === 0 || !incomeTrendsData.categories || incomeTrendsData.categories.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Income Trends</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px] flex items-center justify-center">
-            <p className="text-muted-foreground">Unable to process income data</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const [, setVisibleData] = useState<IncomeDataPoint[]>([]);
   const [, setVisibleRange] = useState({ start: 0, end: 0 });
   const [, setCurrentYear] = useState<string | null>(null);
 
-  // Calculate minimum width based on number of data points
-  const minChartWidth = incomeTrendsData.data?.length
-    ? Math.max(incomeTrendsData.data.length * 60, 300)
-    : 300;
+  // Transform data (memoized to avoid recalculation)
+  const incomeTrendsData = rawIncomeTrendsData ? transformIncomeTrendsForChart(rawIncomeTrendsData) : { data: [], categories: [] };
 
   // Calculate visible bars based on scroll position
   const updateVisibleData = useCallback(() => {
@@ -237,7 +185,57 @@ export function IncomeTrendsChart() {
     };
   }, [incomeTrendsData, updateVisibleData]);
 
+  // Extra safety checks
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Income Trends</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px] flex items-center justify-center">
+            <p className="text-muted-foreground">Loading chart data...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
+  if (!rawIncomeTrendsData || !Array.isArray(rawIncomeTrendsData) || rawIncomeTrendsData.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Income Trends</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px] flex items-center justify-center">
+            <p className="text-muted-foreground">No income data available</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Additional safety check after transformation
+  if (!incomeTrendsData.data || incomeTrendsData.data.length === 0 || !incomeTrendsData.categories || incomeTrendsData.categories.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Income Trends</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px] flex items-center justify-center">
+            <p className="text-muted-foreground">Unable to process income data</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Calculate minimum width based on number of data points
+  const minChartWidth = incomeTrendsData.data?.length
+    ? Math.max(incomeTrendsData.data.length * 60, 300)
+    : 300;
 
   // Custom tooltip for the stacked bar chart
   const CustomTooltip = (props: { active?: boolean; payload?: Array<{ name: string; value: number; color: string; payload: IncomeDataPoint }>; label?: string }) => {

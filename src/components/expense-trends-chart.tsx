@@ -103,12 +103,13 @@ export function ExpenseTrendsChart() {
     }
   }, [categoryExpenses]);
 
-  // Scroll to the right (most recent data) when category is selected or data changes
+  // Scroll to the right (most recent data) only when category is selected
   useEffect(() => {
     if (
       chartContainerRef.current &&
       categoryExpenses?.length &&
-      !isExpensesLoading
+      !isExpensesLoading &&
+      selectedCategoryId
     ) {
       // Small delay to ensure the chart is rendered
       setTimeout(() => {
@@ -120,10 +121,8 @@ export function ExpenseTrendsChart() {
       }, 100);
     }
   }, [
-    categoryExpenses,
-    isExpensesLoading,
     selectedCategoryId,
-    updateVisibleData,
+    isExpensesLoading,
   ]);
 
   // Update visible data when scrolling
