@@ -1,4 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Card, CardHeader, CardTitle } from "~/components/ui/card"
+import { RegularPaymentsList } from "~/components/regular-payments-list"
 
 export const Route = createFileRoute('/app/settings')({
   component: SettingsPage,
@@ -6,9 +8,14 @@ export const Route = createFileRoute('/app/settings')({
 
 function SettingsPage() {
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Settings</h1>
-      <p>This page will contain settings and regular payments management.</p>
+    <div className="py-1 space-y-4">
+      <h1 className="text-xl font-bold mb-6 px-4">Settings</h1>
+      <Card>
+        <CardHeader>
+          <CardTitle>Regular Payments</CardTitle>
+        </CardHeader>
+        <RegularPaymentsList />
+      </Card>
     </div>
   )
 }
