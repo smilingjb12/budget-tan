@@ -9,30 +9,46 @@ import {
 import { Month } from "~/lib/routes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "./query-keys";
-import { 
-  getCategories, 
-  getExpenseCategories, 
-  getIncomeCategories 
+import {
+  getCategories,
+  getExpenseCategories,
+  getIncomeCategories,
 } from "~/server/categories";
-import { 
-  getMonthSummary, 
-  getAllTimeSummary, 
+import {
+  getMonthSummary,
+  getAllTimeSummary,
   getRecordsByMonth,
   getRecordById,
   createRecord,
   updateRecord,
   deleteRecord,
   searchRecordComments,
-  getExpensesVsIncome
+  getExpensesVsIncome,
 } from "~/server/records";
 import { getExchangeRate } from "~/server/exchange-rate";
-import { getRegularPayments, saveRegularPayments, RegularPaymentDto } from "~/server/regular-payments";
-import { getCategoryExpenses, getMonthlyExpensesVsIncome, getIncomeTrends } from "~/server/charts";
-import { MonthlyTotalsDto, MonthlyExpensesVsIncomeDto, IncomeTrendsDto } from "~/services/charts-service";
+import {
+  getRegularPayments,
+  saveRegularPayments,
+  RegularPaymentDto,
+} from "~/server/regular-payments";
+import {
+  getCategoryExpenses,
+  getMonthlyExpensesVsIncome,
+  getIncomeTrends,
+} from "~/server/charts";
+import {
+  MonthlyTotalsDto,
+  MonthlyExpensesVsIncomeDto,
+  IncomeTrendsDto,
+} from "~/services/charts-service";
 
 // Re-export types
 export type { RegularPaymentDto } from "~/server/regular-payments";
-export type { MonthlyTotalsDto, MonthlyExpensesVsIncomeDto, IncomeTrendsDto } from "~/services/charts-service";
+export type {
+  MonthlyTotalsDto,
+  MonthlyExpensesVsIncomeDto,
+  IncomeTrendsDto,
+} from "~/services/charts-service";
 
 // Categories queries
 export function useCategoriesQuery() {
@@ -41,10 +57,9 @@ export function useCategoriesQuery() {
     queryFn: async () => {
       try {
         const response = await getCategories({});
-        console.log('Categories response:', response);
         return response || [];
       } catch (error) {
-        console.error('Categories query error:', error);
+        console.error("Categories query error:", error);
         return [];
       }
     },
@@ -59,7 +74,7 @@ export function useExpenseCategoriesQuery() {
         const response = await getExpenseCategories({});
         return response || [];
       } catch (error) {
-        console.error('Expense categories query error:', error);
+        console.error("Expense categories query error:", error);
         return [];
       }
     },
@@ -74,7 +89,7 @@ export function useIncomeCategoriesQuery() {
         const response = await getIncomeCategories({});
         return response || [];
       } catch (error) {
-        console.error('Income categories query error:', error);
+        console.error("Income categories query error:", error);
         return [];
       }
     },
@@ -88,10 +103,9 @@ export function useMonthSummaryQuery(year: number, month: Month) {
     queryFn: async () => {
       try {
         const response = await getMonthSummary({ data: { year, month } });
-        console.log('Month summary response:', response, 'for', year, month);
         return response || { categorySummaries: [] };
       } catch (error) {
-        console.error('Month summary query error:', error);
+        console.error("Month summary query error:", error);
         return { categorySummaries: [] };
       }
     },
@@ -109,10 +123,10 @@ export function useMonthRecordsQuery(
     queryFn: async () => {
       try {
         const response = await getRecordsByMonth({ data: { year, month } });
-        console.log('Month records response:', response, 'for', year, month);
+        console.log("Month records response:", response, "for", year, month);
         return response || [];
       } catch (error) {
-        console.error('Month records query error:', error);
+        console.error("Month records query error:", error);
         return [];
       }
     },
@@ -127,10 +141,10 @@ export function useAllTimeSummaryQuery() {
     queryFn: async () => {
       try {
         const response = await getAllTimeSummary({});
-        console.log('All time summary response:', response);
+        console.log("All time summary response:", response);
         return response || { totalExpenses: 0, totalProfit: 0 };
       } catch (error) {
-        console.error('All time summary query error:', error);
+        console.error("All time summary query error:", error);
         return { totalExpenses: 0, totalProfit: 0 };
       }
     },
@@ -151,10 +165,10 @@ export function useRecordQuery(
 
       try {
         const response = await getRecordById({ data: { id } });
-        console.log('Record response:', response, 'for ID:', id);
+        console.log("Record response:", response, "for ID:", id);
         return response || null;
       } catch (error) {
-        console.error('Record query error:', error, 'for ID:', id);
+        console.error("Record query error:", error, "for ID:", id);
         return null;
       }
     },
@@ -172,10 +186,20 @@ export function useRecordCommentsQuery(comment: string) {
 
       try {
         const response = await searchRecordComments({ data: { comment } });
-        console.log('Record comments response:', response, 'for comment:', comment);
+        console.log(
+          "Record comments response:",
+          response,
+          "for comment:",
+          comment
+        );
         return response || [];
       } catch (error) {
-        console.error('Record comments query error:', error, 'for comment:', comment);
+        console.error(
+          "Record comments query error:",
+          error,
+          "for comment:",
+          comment
+        );
         return [];
       }
     },
@@ -186,16 +210,16 @@ export function useRecordCommentsQuery(comment: string) {
 // Record mutations
 export function useCreateRecordMutation() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (data: CreateOrUpdateRecordRequest) => {
       try {
-        console.log('Creating record:', data);
+        console.log("Creating record:", data);
         const response = await createRecord({ data });
-        console.log('Create record response:', response);
+        console.log("Create record response:", response);
         return response;
       } catch (error) {
-        console.error('Create record mutation error:', error);
+        console.error("Create record mutation error:", error);
         throw error;
       }
     },
@@ -209,16 +233,16 @@ export function useCreateRecordMutation() {
 
 export function useUpdateRecordMutation() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (data: CreateOrUpdateRecordRequest) => {
       try {
-        console.log('Updating record:', data);
+        console.log("Updating record:", data);
         const response = await updateRecord({ data });
-        console.log('Update record response:', response);
+        console.log("Update record response:", response);
         return response;
       } catch (error) {
-        console.error('Update record mutation error:', error);
+        console.error("Update record mutation error:", error);
         throw error;
       }
     },
@@ -232,16 +256,16 @@ export function useUpdateRecordMutation() {
 
 export function useDeleteRecordMutation() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: number) => {
       try {
-        console.log('Deleting record:', id);
+        console.log("Deleting record:", id);
         const response = await deleteRecord({ data: { id } });
-        console.log('Delete record response:', response);
+        console.log("Delete record response:", response);
         return response;
       } catch (error) {
-        console.error('Delete record mutation error:', error);
+        console.error("Delete record mutation error:", error);
         throw error;
       }
     },
@@ -260,10 +284,12 @@ export function useExchangeRateQuery() {
     queryFn: async () => {
       try {
         const response = await getExchangeRate({});
-        console.log('Exchange rate response:', response);
-        return response || { rate: 4.0, lastUpdatedAt: new Date().toISOString() };
+        console.log("Exchange rate response:", response);
+        return (
+          response || { rate: 4.0, lastUpdatedAt: new Date().toISOString() }
+        );
       } catch (error) {
-        console.error('Exchange rate query error:', error);
+        console.error("Exchange rate query error:", error);
         return { rate: 4.0, lastUpdatedAt: new Date().toISOString() };
       }
     },
@@ -279,10 +305,10 @@ export function useExpensesVsIncomeQuery() {
     queryFn: async () => {
       try {
         const response = await getExpensesVsIncome({});
-        console.log('Expenses vs income response:', response);
+        console.log("Expenses vs income response:", response);
         return response || { monthlyData: [] };
       } catch (error) {
-        console.error('Expenses vs income query error:', error);
+        console.error("Expenses vs income query error:", error);
         return { monthlyData: [] };
       }
     },
@@ -296,10 +322,10 @@ export function useRegularPaymentsQuery() {
     queryFn: async () => {
       try {
         const response = await getRegularPayments({});
-        console.log('Regular payments response:', response);
+        console.log("Regular payments response:", response);
         return response || [];
       } catch (error) {
-        console.error('Regular payments query error:', error);
+        console.error("Regular payments query error:", error);
         return [];
       }
     },
@@ -312,12 +338,12 @@ export function useUpdateRegularPaymentsMutation() {
   return useMutation({
     mutationFn: async (payments: RegularPaymentDto[]) => {
       try {
-        console.log('Updating regular payments:', payments);
+        console.log("Updating regular payments:", payments);
         const response = await saveRegularPayments({ data: payments });
-        console.log('Update regular payments response:', response);
+        console.log("Update regular payments response:", response);
         return response;
       } catch (error) {
-        console.error('Update regular payments mutation error:', error);
+        console.error("Update regular payments mutation error:", error);
         throw error;
       }
     },
@@ -335,11 +361,11 @@ export function useCategoryExpensesQuery(categoryId: number) {
     queryFn: async () => {
       try {
         const response = await getCategoryExpenses({ data: { categoryId } });
-        console.log('Category expenses response:', response);
+        console.log("Category expenses response:", response);
         // TanStack Start server functions wrap response in { result: data }
         return (response as any)?.result || response || [];
       } catch (error) {
-        console.error('Category expenses query error:', error);
+        console.error("Category expenses query error:", error);
         return [];
       }
     },
@@ -353,11 +379,11 @@ export function useMonthlyExpensesVsIncomeQuery() {
     queryFn: async () => {
       try {
         const response = await getMonthlyExpensesVsIncome({});
-        console.log('Monthly expenses vs income response:', response);
+        console.log("Monthly expenses vs income response:", response);
         // TanStack Start server functions wrap response in { result: data }
         return (response as any)?.result || response || [];
       } catch (error) {
-        console.error('Monthly expenses vs income query error:', error);
+        console.error("Monthly expenses vs income query error:", error);
         return [];
       }
     },
@@ -370,11 +396,11 @@ export function useIncomeTrendsQuery() {
     queryFn: async () => {
       try {
         const response = await getIncomeTrends({});
-        console.log('Income trends response:', response);
+        console.log("Income trends response:", response);
         // TanStack Start server functions wrap response in { result: data }
         return (response as any)?.result || response || [];
       } catch (error) {
-        console.error('Income trends query error:', error);
+        console.error("Income trends query error:", error);
         return [];
       }
     },

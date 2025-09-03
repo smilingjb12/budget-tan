@@ -71,12 +71,12 @@ export function MonthYearPicker({
     if (!expensesVsIncomeData?.monthlyData) return 0;
     
     const monthData = expensesVsIncomeData.monthlyData.find(
-      (data) => data.year === year && data.month === monthIndex + 1 // Convert to 1-indexed month
+      (data) => Number(data.year) === year && Number(data.month) === monthIndex + 1 // Convert to 1-indexed month
     );
     
     if (!monthData) return 0;
     
-    return (monthData.totalIncome || 0) - (monthData.totalExpenses || 0);
+    return (Number(monthData.totalIncome) || 0) - (Number(monthData.totalExpenses) || 0);
   };
 
   const handlePreviousYear = () => {
