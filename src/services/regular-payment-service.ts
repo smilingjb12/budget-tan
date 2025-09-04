@@ -1,11 +1,12 @@
 import { db } from '~/db'
 import { regularPayments } from '~/db/schema/schema'
+import { eq } from 'drizzle-orm'
 
 export interface RegularPaymentDto {
   id?: number
   name: string
   amount: number
-  date: string
+  lastModified?: string
 }
 
 export const RegularPaymentService = {
@@ -15,7 +16,7 @@ export const RegularPaymentService = {
         id: regularPayments.id,
         name: regularPayments.name,
         amount: regularPayments.amount,
-        date: regularPayments.date,
+        lastModified: regularPayments.lastModified,
       })
       .from(regularPayments)
       .orderBy(regularPayments.name)
@@ -24,27 +25,67 @@ export const RegularPaymentService = {
       id: payment.id,
       name: payment.name,
       amount: Number(payment.amount),
-      date: payment.date.toISOString(),
+      lastModified: payment.lastModified.toISOString(),
     }))
   },
 
-  async saveRegularPayments(payments: RegularPaymentDto[]): Promise<{ success: boolean }> {
-    // Use a transaction to ensure both operations complete or fail together
-    await db.transaction(async (tx) => {
-      // Delete all existing payments
-      await tx.delete(regularPayments)
+  async createRegularPayment(payment: RegularPaymentDto): Promise<{ success: boolean }> {
+    await db
+      .insert(regularPayments)
+      .values({
+        name: payment.name,
+        amount: payment.amount.toString(),
+        lastModified: new Date(), // Always set explicitly
+      })
 
-      // Insert new payments if there are any
-      if (payments.length > 0) {
-        await tx.insert(regularPayments).values(
-          payments.map((payment) => ({
-            name: payment.name,
-            amount: payment.amount.toString(),
-            date: new Date(payment.date),
-          }))
-        )
-      }
-    })
+    return { success: true }
+  },
+
+  async updateRegularPayment(payment: RegularPaymentDto): Promise<{ success: boolean }> {
+    if (!payment.id) {
+      throw new Error('Payment ID is required for updates')
+    }
+
+    // Get the current payment to check if values actually changed
+    const current = await db
+      .select({
+        name: regularPayments.name,
+        amount: regularPayments.amount,
+      })
+      .from(regularPayments)
+      .where(eq(regularPayments.id, payment.id))
+      .limit(1)
+
+    if (current.length === 0) {
+      throw new Error('Payment not found')
+    }
+
+    const currentPayment = current[0]
+    const hasChanged = 
+      currentPayment.name !== payment.name || 
+      Number(currentPayment.amount) !== payment.amount
+
+    if (!hasChanged) {
+      // No changes, don't update lastModified
+      return { success: true }
+    }
+
+    await db
+      .update(regularPayments)
+      .set({
+        name: payment.name,
+        amount: payment.amount.toString(),
+        lastModified: new Date(), // Only update when values actually changed
+      })
+      .where(eq(regularPayments.id, payment.id))
+
+    return { success: true }
+  },
+
+  async deleteRegularPayment(id: number): Promise<{ success: boolean }> {
+    await db
+      .delete(regularPayments)
+      .where(eq(regularPayments.id, id))
 
     return { success: true }
   },

@@ -1,0 +1,1 @@
+ALTER TABLE "regularPayments" RENAME COLUMN "date" TO "lastModified";

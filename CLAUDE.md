@@ -58,6 +58,14 @@ The application uses TanStack Router's file-based routing system:
 - Schema definitions in `src/db/schema/schema.ts`
 - Migration files in `src/db/migrations/`
 
+**IMPORTANT: Database Migrations**
+- When modifying `src/db/schema/schema.ts`, you MUST generate a migration using `npx drizzle-kit generate`
+- The migration generator will detect changes and prompt for actions (create/rename/delete columns)
+- Always run migrations with `npm run migrate` before starting the application
+- Migration files are automatically numbered and tracked in `src/db/migrations/meta/_journal.json`
+- **NEVER manually create migration files** - always use `npx drizzle-kit generate` to ensure proper metadata and hashing
+- If the migration generator cannot be run programmatically, ask the user to run `npx drizzle-kit generate` manually
+
 ### UI Components & Styling
 - **shadcn/ui** components for consistent, accessible UI elements
 - **Tailwind CSS** for styling with utility-first approach

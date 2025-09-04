@@ -1,27 +1,35 @@
 "use client";
 
 import { Button } from "~/components/ui/button";
+import { Badge } from "~/components/ui/badge";
 import { CardContent, CardFooter } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import {
   useRegularPaymentsQuery,
-  useUpdateRegularPaymentsMutation,
+  useCreateRegularPaymentMutation,
+  useUpdateRegularPaymentMutation,
+  useDeleteRegularPaymentMutation,
   RegularPaymentDto,
 } from "~/lib/queries";
-import { Edit, Plus, Trash2 } from "lucide-react";
+import { Edit, Plus, Trash2, Check, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import LoadingIndicator from "./loading-indicator";
 
 export function RegularPaymentsList() {
   const { data: regularPayments, isLoading, error } = useRegularPaymentsQuery();
-  const updateMutation = useUpdateRegularPaymentsMutation();
+  const createMutation = useCreateRegularPaymentMutation();
+  const updateMutation = useUpdateRegularPaymentMutation();
+  const deleteMutation = useDeleteRegularPaymentMutation();
 
   const [payments, setPayments] = useState<RegularPaymentDto[]>([]);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [originalPayments, setOriginalPayments] = useState<RegularPaymentDto[]>(
-    []
-  );
+  const [editingIds, setEditingIds] = useState<Set<number>>(new Set());
+  const [editingPayments, setEditingPayments] = useState<Map<number, RegularPaymentDto>>(new Map());
+  const [isAddingNew, setIsAddingNew] = useState(false);
+  const [newPayment, setNewPayment] = useState<RegularPaymentDto>({
+    name: "",
+    amount: 0,
+  });
 
   useEffect(() => {
     if (regularPayments && Array.isArray(regularPayments)) {
@@ -30,7 +38,6 @@ export function RegularPaymentsList() {
         (a: RegularPaymentDto, b: RegularPaymentDto) => b.amount - a.amount
       );
       setPayments(sortedPayments);
-      setOriginalPayments(sortedPayments.map((payment: RegularPaymentDto) => ({ ...payment })));
       calculateTotal(sortedPayments);
     }
   }, [regularPayments]);
@@ -38,6 +45,13 @@ export function RegularPaymentsList() {
   const calculateTotal = (items: RegularPaymentDto[]) => {
     const total = items.reduce((sum, item) => sum + item.amount, 0);
     setTotalAmount(total);
+  };
+
+  const isPaymentStale = (lastModified?: string) => {
+    if (!lastModified) return false;
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    return new Date(lastModified) < thirtyDaysAgo;
   };
 
   const getTextColor = (value: number, data: RegularPaymentDto[]) => {
@@ -92,55 +106,85 @@ export function RegularPaymentsList() {
     return `hsl(${h}, ${s}%, ${l}%)`;
   };
 
-  const handleAddPayment = () => {
-    const newPayment: RegularPaymentDto = {
-      name: "",
-      amount: 0,
-      date: new Date().toISOString(),
-    };
-
-    const updatedPayments: RegularPaymentDto[] = [...payments, newPayment];
-    setPayments(updatedPayments);
-    calculateTotal(updatedPayments);
+  const handleEditPayment = (payment: RegularPaymentDto) => {
+    if (!payment.id) return;
+    setEditingIds(prev => new Set([...prev, payment.id!]));
+    setEditingPayments(prev => new Map(prev).set(payment.id!, { ...payment }));
   };
 
-  const handleRemovePayment = (index: number) => {
-    const updatedPayments: RegularPaymentDto[] = [...payments];
-    updatedPayments.splice(index, 1);
-    setPayments(updatedPayments);
-    calculateTotal(updatedPayments);
+  const handleCancelEdit = (paymentId: number) => {
+    setEditingIds(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(paymentId);
+      return newSet;
+    });
+    setEditingPayments(prev => {
+      const newMap = new Map(prev);
+      newMap.delete(paymentId);
+      return newMap;
+    });
   };
 
-  const handleNameChange = (index: number, value: string) => {
-    const updatedPayments: RegularPaymentDto[] = [...payments];
-    updatedPayments[index]!.name = value;
-    setPayments(updatedPayments);
-  };
+  const handleSaveEdit = (paymentId: number) => {
+    const editedPayment = editingPayments.get(paymentId);
+    if (!editedPayment) return;
 
-  const handleAmountChange = (index: number, value: string) => {
-    const updatedPayments: RegularPaymentDto[] = [...payments];
-    updatedPayments[index]!.amount = parseFloat(value) || 0;
-    setPayments(updatedPayments);
-    calculateTotal(updatedPayments);
-  };
-
-  const handleSave = () => {
-    updateMutation.mutate(payments, {
+    updateMutation.mutate(editedPayment, {
       onSuccess: () => {
-        setIsEditMode(false);
-        setOriginalPayments(payments.map((payment: RegularPaymentDto) => ({ ...payment })));
+        setEditingIds(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(paymentId);
+          return newSet;
+        });
+        setEditingPayments(prev => {
+          const newMap = new Map(prev);
+          newMap.delete(paymentId);
+          return newMap;
+        });
       },
     });
   };
 
-  const handleEnterEditMode = () => {
-    setIsEditMode(true);
+  const handleEditingChange = (paymentId: number, field: 'name' | 'amount', value: string) => {
+    setEditingPayments(prev => {
+      const newMap = new Map(prev);
+      const payment = newMap.get(paymentId);
+      if (payment) {
+        newMap.set(paymentId, {
+          ...payment,
+          [field]: field === 'amount' ? (parseFloat(value) || 0) : value,
+        });
+      }
+      return newMap;
+    });
   };
 
-  const handleCancelEdit = () => {
-    setPayments(originalPayments.map((payment: RegularPaymentDto) => ({ ...payment })));
-    calculateTotal(originalPayments);
-    setIsEditMode(false);
+  const handleAddNew = () => {
+    setIsAddingNew(true);
+  };
+
+  const handleSaveNew = () => {
+    createMutation.mutate(newPayment, {
+      onSuccess: () => {
+        setIsAddingNew(false);
+        setNewPayment({
+          name: "",
+          amount: 0,
+        });
+      },
+    });
+  };
+
+  const handleCancelNew = () => {
+    setIsAddingNew(false);
+    setNewPayment({
+      name: "",
+      amount: 0,
+    });
+  };
+
+  const handleDeletePayment = (paymentId: number) => {
+    deleteMutation.mutate(paymentId);
   };
 
   if (isLoading) {
@@ -155,101 +199,158 @@ export function RegularPaymentsList() {
     <>
       <CardContent>
         <div className="space-y-4">
-          {payments.map((payment: RegularPaymentDto, index: number) => (
-            <div key={index} className="flex items-start space-x-2">
-              {isEditMode ? (
-                <>
-                  <div className="flex-1 space-y-2">
-                    <Input
-                      placeholder="Name"
-                      value={payment.name}
-                      onChange={(e) => handleNameChange(index, e.target.value)}
-                      className="w-full"
-                    />
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        $
-                      </span>
-                      <Input
-                        type="number"
-                        placeholder="0.00"
-                        value={payment.amount}
-                        onChange={(e) =>
-                          handleAmountChange(index, e.target.value)
-                        }
-                        className="pl-7 w-full"
-                        step="0.01"
-                        min="0"
-                      />
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleRemovePayment(index)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <div
-                    className="flex-1 font-medium pl-3"
-                    style={{
-                      borderLeft: `4px solid ${getTextColor(
-                        payment.amount,
-                        payments
-                      )}`,
-                    }}
-                  >
-                    {payment.name}
-                  </div>
-                  <div className="w-auto text-right font-medium">
-                    ${payment.amount.toFixed(2)}
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
+          {payments.map((payment: RegularPaymentDto) => {
+            const isEditing = payment.id && editingIds.has(payment.id);
+            const editingData = payment.id ? editingPayments.get(payment.id) : null;
+            const displayPayment = isEditing && editingData ? editingData : payment;
+            const isStale = isPaymentStale(payment.lastModified);
 
-          {isEditMode && (
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleAddPayment}
-            >
-              <Plus className="h-4 w-4 mr-2" /> Add Payment
-            </Button>
+            return (
+              <div key={payment.id || 'new'} className={`flex space-x-2 ${isEditing ? 'items-start' : 'items-center'}`}>
+                {isEditing ? (
+                  <>
+                    <div className="flex-1 space-y-2">
+                      <Input
+                        placeholder="Name"
+                        value={displayPayment.name}
+                        onChange={(e) => handleEditingChange(payment.id!, 'name', e.target.value)}
+                        className="w-full"
+                      />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                          $
+                        </span>
+                        <Input
+                          type="number"
+                          placeholder="0.00"
+                          value={displayPayment.amount}
+                          onChange={(e) => handleEditingChange(payment.id!, 'amount', e.target.value)}
+                          className="pl-7 w-full"
+                          step="0.01"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleSaveEdit(payment.id!)}
+                        disabled={updateMutation.isPending}
+                      >
+                        <Check className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleCancelEdit(payment.id!)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center flex-1 space-x-2">
+                      <div
+                        className="flex-1 font-medium pl-3"
+                        style={{
+                          borderLeft: `4px solid ${getTextColor(
+                            payment.amount,
+                            payments
+                          )}`,
+                        }}
+                      >
+                        <span>{payment.name}</span>
+                      </div>
+                      <div className="w-auto text-right font-medium">
+                        ${payment.amount.toFixed(2)}
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      {isStale && (
+                        <Badge variant="destructive" className="text-xs">
+                          Update needed
+                        </Badge>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEditPayment(payment)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeletePayment(payment.id!)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+
+          {isAddingNew && (
+            <div className="flex items-start space-x-2">
+              <div className="flex-1 space-y-2">
+                <Input
+                  placeholder="Name"
+                  value={newPayment.name}
+                  onChange={(e) => setNewPayment({ ...newPayment, name: e.target.value })}
+                  className="w-full"
+                />
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                    $
+                  </span>
+                  <Input
+                    type="number"
+                    placeholder="0.00"
+                    value={newPayment.amount}
+                    onChange={(e) => setNewPayment({ ...newPayment, amount: parseFloat(e.target.value) || 0 })}
+                    className="pl-7 w-full"
+                    step="0.01"
+                    min="0"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center space-x-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleSaveNew}
+                  disabled={createMutation.isPending}
+                >
+                  <Check className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleCancelNew}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           )}
         </div>
       </CardContent>
 
       <CardFooter className="flex justify-between">
-        {isEditMode ? (
-          <>
-            <div></div>
-            <div className="space-x-2">
-              <Button variant="outline" onClick={handleCancelEdit}>
-                Cancel
-              </Button>
-              <Button onClick={handleSave} disabled={updateMutation.isPending}>
-                {updateMutation.isPending ? "Saving..." : <>Save Changes</>}
-              </Button>
-            </div>
-          </>
-        ) : (
-          <>
-            <div></div>
-            <div className="flex flex-row justify-between items-center w-full">
-              <Button variant="outline" onClick={handleEnterEditMode}>
-                <Edit className="h-4 w-4 mr-2" /> Edit Payments
-              </Button>
-              <div className="font-semibold text-right">
-                Total: ${totalAmount.toFixed(2)}
-              </div>
-            </div>
-          </>
-        )}
+        <div className="flex space-x-2">
+          {!isAddingNew && (
+            <Button variant="outline" onClick={handleAddNew}>
+              <Plus className="h-4 w-4 mr-2" /> Add Payment
+            </Button>
+          )}
+        </div>
+        <div className="font-semibold text-right">
+          Total: ${totalAmount.toFixed(2)}
+        </div>
       </CardFooter>
     </>
   );

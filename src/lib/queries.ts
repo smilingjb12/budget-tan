@@ -26,7 +26,9 @@ import {
 import { getExchangeRate } from "~/server/exchange-rate";
 import {
   getRegularPayments,
-  saveRegularPayments,
+  createRegularPayment,
+  updateRegularPayment,
+  deleteRegularPayment,
 } from "~/server/regular-payments";
 import { RegularPaymentDto } from "~/services/regular-payment-service";
 import {
@@ -330,18 +332,62 @@ export function useRegularPaymentsQuery() {
   });
 }
 
-export function useUpdateRegularPaymentsMutation() {
+export function useCreateRegularPaymentMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payments: RegularPaymentDto[]): Promise<{ success: boolean }> => {
+    mutationFn: async (payment: RegularPaymentDto): Promise<{ success: boolean }> => {
       try {
-        console.log("Updating regular payments:", payments);
-        const response = await saveRegularPayments({ data: payments });
-        console.log("Update regular payments response:", response);
+        console.log("Creating regular payment:", payment);
+        const response = await createRegularPayment({ data: payment });
+        console.log("Create regular payment response:", response);
         return response as { success: boolean };
       } catch (error) {
-        console.error("Update regular payments mutation error:", error);
+        console.error("Create regular payment mutation error:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      // Invalidate regular payments query
+      queryClient.invalidateQueries({ queryKey: QueryKeys.regularPayments() });
+    },
+  });
+}
+
+export function useUpdateRegularPaymentMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payment: RegularPaymentDto): Promise<{ success: boolean }> => {
+      try {
+        console.log("Updating regular payment:", payment);
+        const response = await updateRegularPayment({ data: payment });
+        console.log("Update regular payment response:", response);
+        return response as { success: boolean };
+      } catch (error) {
+        console.error("Update regular payment mutation error:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      // Invalidate regular payments query
+      queryClient.invalidateQueries({ queryKey: QueryKeys.regularPayments() });
+    },
+  });
+}
+
+export function useDeleteRegularPaymentMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: number): Promise<{ success: boolean }> => {
+      try {
+        console.log("Deleting regular payment:", id);
+        const response = await deleteRegularPayment({ data: { id } });
+        console.log("Delete regular payment response:", response);
+        return response as { success: boolean };
+      } catch (error) {
+        console.error("Delete regular payment mutation error:", error);
         throw error;
       }
     },

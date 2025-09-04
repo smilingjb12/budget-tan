@@ -10,7 +10,7 @@ const regularPaymentSchema = z.object({
   id: z.number().optional(),
   name: z.string().min(1),
   amount: z.number(),
-  date: z.string(),
+  lastModified: z.string().optional(),
 })
 
 // Get all regular payments
@@ -20,9 +20,23 @@ export const getRegularPayments = createServerFn({ method: 'GET' }).handler(
   }
 )
 
-// Save regular payments (replaces all existing payments)
-export const saveRegularPayments = createServerFn({ method: 'POST' })
-  .validator(z.array(regularPaymentSchema))
-  .handler(async ({ data: payments }) => {
-    return await RegularPaymentService.saveRegularPayments(payments)
+// Create a new regular payment
+export const createRegularPayment = createServerFn({ method: 'POST' })
+  .validator(regularPaymentSchema)
+  .handler(async ({ data: payment }) => {
+    return await RegularPaymentService.createRegularPayment(payment)
+  })
+
+// Update a single regular payment
+export const updateRegularPayment = createServerFn({ method: 'POST' })
+  .validator(regularPaymentSchema)
+  .handler(async ({ data: payment }) => {
+    return await RegularPaymentService.updateRegularPayment(payment)
+  })
+
+// Delete a regular payment
+export const deleteRegularPayment = createServerFn({ method: 'POST' })
+  .validator(z.object({ id: z.number() }))
+  .handler(async ({ data }) => {
+    return await RegularPaymentService.deleteRegularPayment(data.id)
   })
