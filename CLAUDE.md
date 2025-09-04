@@ -26,9 +26,10 @@ The application uses TanStack Router's file-based routing system:
 - `src/components/` - Reusable components (error boundaries, not found pages)  
 - `src/server/` - Server functions using TanStack Start's `createServerFn()` 
 - `src/services/` - Business logic and data access layer using Service delegation pattern
+- `src/middleware/` - Authentication and other middleware for server functions
 - `src/db/` - Database schema, migrations, and Drizzle ORM configuration
 - `src/utils/` - Utility functions (SEO helpers, middleware, data fetching)
-- `src/lib/` - Shared utilities, hooks, and helper functions
+- `src/lib/` - Shared utilities, hooks, helper functions, and authentication configuration
 - `src/styles/` - CSS files (using Tailwind CSS)
 
 ### Routing Patterns
@@ -50,6 +51,25 @@ The application uses TanStack Router's file-based routing system:
 - Services handle all database operations, validation, and data transformation
 - Server functions act as thin API layer that calls appropriate service methods
 - The build process automatically adds `'use server'` directives - no manual addition needed
+- **Authentication middleware**: All server functions use `authMiddleware` from `src/middleware/auth.ts` to ensure authenticated access
+
+### Authentication & Security
+- **Better Auth** for authentication with email/password sign-in
+- **Database-backed sessions** using Drizzle adapter for Better Auth
+- **Protected routes**: All `/app/*` routes require authentication via `beforeLoad` checks
+- **Server function protection**: All server functions use `authMiddleware` for authentication
+- **Authentication configuration** in `src/lib/auth.ts` with Better Auth setup
+- **Client-side auth** handled by `src/lib/auth-client.ts` for React components
+- **Middleware pattern**: Authentication uses TanStack Start middleware for clean separation of concerns
+- **Environment variables**: `AUTH_SECRET` and `BASE_URL` required for authentication
+- **Database schema**: Authentication tables (user, session, account, verification) included in schema
+
+**Authentication Flow**:
+1. Users sign in at `/sign-in` route with email/password
+2. Better Auth creates secure sessions stored in database
+3. Route protection redirects unauthenticated users to sign-in
+4. Server functions validate sessions via middleware before execution
+5. Client-side auth context provides user data to components
 
 ### Database & Data Access
 - **PostgreSQL** as the database
@@ -75,6 +95,7 @@ The application uses TanStack Router's file-based routing system:
 - Custom utility function `cn()` in `src/lib/utils.ts` for className merging
 
 ### Additional Libraries & Tools
+- **Better Auth** for authentication and session management
 - **React Hook Form** with Zod validation for form handling
 - **TanStack Query** for server state management
 - **TanStack Table** for data tables

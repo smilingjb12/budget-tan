@@ -19,3 +19,4 @@ yarn.lock
 /playwright/.cache/
 .tanstack
 nul
+.claude/settings.json

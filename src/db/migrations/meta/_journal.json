@@ -64,6 +64,20 @@
       "when": 1756943730577,
       "tag": "0009_oval_green_goblin",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1757023210570,
+      "tag": "0010_red_zemo",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1757027723791,
+      "tag": "0011_fair_molten_man",
+      "breakpoints": true
     }
   ]
 }

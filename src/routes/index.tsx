@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
+import { requireAuth } from '~/server/auth'
 
 export const Route = createFileRoute('/')({
+  beforeLoad: async () => await requireAuth(),
   component: Home,
 })
 

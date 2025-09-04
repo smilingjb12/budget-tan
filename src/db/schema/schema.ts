@@ -57,3 +57,4 @@ export const regularPayments = pgTable("regularPayments", {
   }).notNull(),
   lastModified: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
+

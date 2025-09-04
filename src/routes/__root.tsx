@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ClerkProvider } from '@clerk/tanstack-react-start'
 import * as React from 'react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
@@ -66,17 +67,19 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html className="dark">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <TanStackRouterDevtools position="bottom-right" />
-        </QueryClientProvider>
-        <Scripts />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html className="dark">
+        <head>
+          <HeadContent />
+        </head>
+        <body>
+          <QueryClientProvider client={queryClient}>
+            {children}
+            <TanStackRouterDevtools position="bottom-right" />
+          </QueryClientProvider>
+          <Scripts />
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }

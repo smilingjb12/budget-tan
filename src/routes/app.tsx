@@ -3,8 +3,10 @@ import { cn } from "~/lib/utils";
 import { History, LineChart, Settings2 } from "lucide-react";
 import { useRouter, useLocation } from "@tanstack/react-router";
 import { RouteMatchers, Routes, type Month } from "~/lib/routes";
+import { requireAuth } from "~/server/auth";
 
 export const Route = createFileRoute("/app")({
+  beforeLoad: async () => await requireAuth(),
   component: AppLayout,
 });
 

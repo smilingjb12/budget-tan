@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { RegularPaymentService, RegularPaymentDto } from '~/services/regular-payment-service'
 import { z } from 'zod'
+import { authMiddleware } from '~/middleware/auth'
 
 // Export the type for use in other files
 export type { RegularPaymentDto }
@@ -14,14 +15,15 @@ const regularPaymentSchema = z.object({
 })
 
 // Get all regular payments
-export const getRegularPayments = createServerFn({ method: 'GET' }).handler(
-  async () => {
+export const getRegularPayments = createServerFn({ method: 'GET' })
+  .middleware([authMiddleware])
+  .handler(async () => {
     return await RegularPaymentService.getRegularPayments()
-  }
-)
+  })
 
 // Create a new regular payment
 export const createRegularPayment = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
   .validator(regularPaymentSchema)
   .handler(async ({ data: payment }) => {
     return await RegularPaymentService.createRegularPayment(payment)
@@ -29,6 +31,7 @@ export const createRegularPayment = createServerFn({ method: 'POST' })
 
 // Update a single regular payment
 export const updateRegularPayment = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
   .validator(regularPaymentSchema)
   .handler(async ({ data: payment }) => {
     return await RegularPaymentService.updateRegularPayment(payment)
@@ -36,6 +39,7 @@ export const updateRegularPayment = createServerFn({ method: 'POST' })
 
 // Delete a regular payment
 export const deleteRegularPayment = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
   .validator(z.object({ id: z.number() }))
   .handler(async ({ data }) => {
     return await RegularPaymentService.deleteRegularPayment(data.id)

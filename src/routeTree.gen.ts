@@ -11,6 +11,7 @@
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppSettingsRouteImport } from './routes/app/settings'
@@ -20,6 +21,11 @@ import { ServerRoute as CustomScriptDotjsServerRouteImport } from './routes/cust
 
 const rootServerRouteImport = createServerRootRoute()
 
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
@@ -54,6 +60,7 @@ const CustomScriptDotjsServerRoute = CustomScriptDotjsServerRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/sign-in': typeof SignInRoute
   '/app/charts': typeof AppChartsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/$year/$month': typeof AppYearMonthRoute
@@ -61,6 +68,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/sign-in': typeof SignInRoute
   '/app/charts': typeof AppChartsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/$year/$month': typeof AppYearMonthRoute
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/sign-in': typeof SignInRoute
   '/app/charts': typeof AppChartsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/$year/$month': typeof AppYearMonthRoute
@@ -78,15 +87,23 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/sign-in'
     | '/app/charts'
     | '/app/settings'
     | '/app/$year/$month'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app' | '/app/charts' | '/app/settings' | '/app/$year/$month'
+  to:
+    | '/'
+    | '/app'
+    | '/sign-in'
+    | '/app/charts'
+    | '/app/settings'
+    | '/app/$year/$month'
   id:
     | '__root__'
     | '/'
     | '/app'
+    | '/sign-in'
     | '/app/charts'
     | '/app/settings'
     | '/app/$year/$month'
@@ -95,6 +112,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  SignInRoute: typeof SignInRoute
 }
 export interface FileServerRoutesByFullPath {
   '/customScript.js': typeof CustomScriptDotjsServerRoute
@@ -120,6 +138,13 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app': {
       id: '/app'
       path: '/app'
@@ -186,6 +211,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  SignInRoute: SignInRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
