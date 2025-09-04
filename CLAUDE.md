@@ -54,22 +54,22 @@ The application uses TanStack Router's file-based routing system:
 - **Authentication middleware**: All server functions use `authMiddleware` from `src/middleware/auth.ts` to ensure authenticated access
 
 ### Authentication & Security
-- **Better Auth** for authentication with email/password sign-in
-- **Database-backed sessions** using Drizzle adapter for Better Auth
-- **Protected routes**: All `/app/*` routes require authentication via `beforeLoad` checks
-- **Server function protection**: All server functions use `authMiddleware` for authentication
-- **Authentication configuration** in `src/lib/auth.ts` with Better Auth setup
-- **Client-side auth** handled by `src/lib/auth-client.ts` for React components
-- **Middleware pattern**: Authentication uses TanStack Start middleware for clean separation of concerns
-- **Environment variables**: `AUTH_SECRET` and `BASE_URL` required for authentication
-- **Database schema**: Authentication tables (user, session, account, verification) included in schema
+- **Clerk** for authentication with Google OAuth sign-in only
+- **External authentication provider**: Clerk handles all user management and sessions
+- **Protected routes**: All `/app/*` routes and root route `/` require authentication via `beforeLoad` checks
+- **Server function protection**: All server functions use `authMiddleware` for authentication using Clerk's `getAuth()`
+- **Authentication server functions** in `src/server/auth.ts` with Clerk integration
+- **Middleware pattern**: Authentication uses TanStack Start middleware with Clerk's server-side helpers
+- **Environment variables**: `VITE_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` required for authentication
+- **No database authentication tables**: Clerk manages all user data externally
 
 **Authentication Flow**:
-1. Users sign in at `/sign-in` route with email/password
-2. Better Auth creates secure sessions stored in database
-3. Route protection redirects unauthenticated users to sign-in
-4. Server functions validate sessions via middleware before execution
-5. Client-side auth context provides user data to components
+1. Users visit any protected route and are redirected to `/sign-in` if not authenticated
+2. Sign-in page shows Google OAuth button using Clerk's `SignInButton` component
+3. Clerk handles Google OAuth flow and creates secure sessions
+4. Route protection uses `requireAuth()` server function to validate sessions
+5. Server functions validate sessions via `authMiddleware` using Clerk's `getAuth()`
+6. Client-side components use Clerk's React hooks for authentication state
 
 ### Database & Data Access
 - **PostgreSQL** as the database
@@ -95,7 +95,7 @@ The application uses TanStack Router's file-based routing system:
 - Custom utility function `cn()` in `src/lib/utils.ts` for className merging
 
 ### Additional Libraries & Tools
-- **Better Auth** for authentication and session management
+- **Clerk** for authentication and user management (`@clerk/tanstack-react-start`)
 - **React Hook Form** with Zod validation for form handling
 - **TanStack Query** for server state management
 - **TanStack Table** for data tables
@@ -110,6 +110,13 @@ The application uses TanStack Router's file-based routing system:
 - **TanStack Router Devtools** enabled in development
 - **ESLint** with TanStack-specific rules for code quality
 - Custom Vite configuration with React plugin and path resolution
+
+### Code Quality & Standards
+- **ESLint configuration** in `eslint.config.js` with TypeScript and TanStack-specific rules
+- **IMPORTANT**: All code must follow the ESLint rules defined in `eslint.config.js`
+- Strict TypeScript rules enforced: no explicit `any`, unsafe assignments, member access, calls, or returns
+- TanStack Router and Query recommended rules enabled
+- Unused variables treated as warnings, not errors
 
 ### Architecture Principles
 The application follows a clean architecture with clear separation of concerns:
