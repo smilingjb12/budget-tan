@@ -97,3 +97,11 @@ The application follows a clean architecture with clear separation of concerns:
 - **Services** contain business logic and data access
 - **Components** are reusable UI elements
 - The generated route tree should never be manually edited
+
+### Component Data Ownership Guidelines
+For non-reusable application components (used in single locations):
+- **Components should own their data** - fetch and manipulate data they need directly
+- **Minimize props** - avoid passing server-fetched data from parent to child
+- **Leverage TanStack Query caching** - child components can safely re-request the same queries since all queries are cached by default
+- **Keep components self-contained** - reduces coupling and makes components easier to reason about
+- Only pass props when truly necessary for component communication or when creating genuinely reusable components
