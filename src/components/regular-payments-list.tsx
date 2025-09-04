@@ -24,7 +24,9 @@ export function RegularPaymentsList() {
   const [payments, setPayments] = useState<RegularPaymentDto[]>([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [editingIds, setEditingIds] = useState<Set<number>>(new Set());
-  const [editingPayments, setEditingPayments] = useState<Map<number, RegularPaymentDto>>(new Map());
+  const [editingPayments, setEditingPayments] = useState<
+    Map<number, RegularPaymentDto>
+  >(new Map());
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newPayment, setNewPayment] = useState<RegularPaymentDto>({
     name: "",
@@ -108,17 +110,19 @@ export function RegularPaymentsList() {
 
   const handleEditPayment = (payment: RegularPaymentDto) => {
     if (!payment.id) return;
-    setEditingIds(prev => new Set([...prev, payment.id!]));
-    setEditingPayments(prev => new Map(prev).set(payment.id!, { ...payment }));
+    setEditingIds((prev) => new Set([...prev, payment.id!]));
+    setEditingPayments((prev) =>
+      new Map(prev).set(payment.id!, { ...payment })
+    );
   };
 
   const handleCancelEdit = (paymentId: number) => {
-    setEditingIds(prev => {
+    setEditingIds((prev) => {
       const newSet = new Set(prev);
       newSet.delete(paymentId);
       return newSet;
     });
-    setEditingPayments(prev => {
+    setEditingPayments((prev) => {
       const newMap = new Map(prev);
       newMap.delete(paymentId);
       return newMap;
@@ -131,12 +135,12 @@ export function RegularPaymentsList() {
 
     updateMutation.mutate(editedPayment, {
       onSuccess: () => {
-        setEditingIds(prev => {
+        setEditingIds((prev) => {
           const newSet = new Set(prev);
           newSet.delete(paymentId);
           return newSet;
         });
-        setEditingPayments(prev => {
+        setEditingPayments((prev) => {
           const newMap = new Map(prev);
           newMap.delete(paymentId);
           return newMap;
@@ -145,14 +149,18 @@ export function RegularPaymentsList() {
     });
   };
 
-  const handleEditingChange = (paymentId: number, field: 'name' | 'amount', value: string) => {
-    setEditingPayments(prev => {
+  const handleEditingChange = (
+    paymentId: number,
+    field: "name" | "amount",
+    value: string
+  ) => {
+    setEditingPayments((prev) => {
       const newMap = new Map(prev);
       const payment = newMap.get(paymentId);
       if (payment) {
         newMap.set(paymentId, {
           ...payment,
-          [field]: field === 'amount' ? (parseFloat(value) || 0) : value,
+          [field]: field === "amount" ? parseFloat(value) || 0 : value,
         });
       }
       return newMap;
@@ -201,19 +209,31 @@ export function RegularPaymentsList() {
         <div className="space-y-4">
           {payments.map((payment: RegularPaymentDto) => {
             const isEditing = payment.id && editingIds.has(payment.id);
-            const editingData = payment.id ? editingPayments.get(payment.id) : null;
-            const displayPayment = isEditing && editingData ? editingData : payment;
+            const editingData = payment.id
+              ? editingPayments.get(payment.id)
+              : null;
+            const displayPayment =
+              isEditing && editingData ? editingData : payment;
             const isStale = isPaymentStale(payment.lastModified);
 
             return (
-              <div key={payment.id || 'new'} className={`flex space-x-2 ${isEditing ? 'items-start' : 'items-center'}`}>
+              <div
+                key={payment.id || "new"}
+                className={`flex space-x-2 ${isEditing ? "items-start" : "items-center"}`}
+              >
                 {isEditing ? (
                   <>
                     <div className="flex-1 space-y-2">
                       <Input
                         placeholder="Name"
                         value={displayPayment.name}
-                        onChange={(e) => handleEditingChange(payment.id!, 'name', e.target.value)}
+                        onChange={(e) =>
+                          handleEditingChange(
+                            payment.id!,
+                            "name",
+                            e.target.value
+                          )
+                        }
                         className="w-full"
                       />
                       <div className="relative">
@@ -224,7 +244,13 @@ export function RegularPaymentsList() {
                           type="number"
                           placeholder="0.00"
                           value={displayPayment.amount}
-                          onChange={(e) => handleEditingChange(payment.id!, 'amount', e.target.value)}
+                          onChange={(e) =>
+                            handleEditingChange(
+                              payment.id!,
+                              "amount",
+                              e.target.value
+                            )
+                          }
                           className="pl-7 w-full"
                           step="0.01"
                           min="0"
@@ -270,7 +296,7 @@ export function RegularPaymentsList() {
                     <div className="flex items-center space-x-1">
                       {isStale && (
                         <Badge variant="destructive" className="text-xs">
-                          Update needed
+                          Old
                         </Badge>
                       )}
                       <Button
@@ -300,7 +326,9 @@ export function RegularPaymentsList() {
                 <Input
                   placeholder="Name"
                   value={newPayment.name}
-                  onChange={(e) => setNewPayment({ ...newPayment, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewPayment({ ...newPayment, name: e.target.value })
+                  }
                   className="w-full"
                 />
                 <div className="relative">
@@ -311,7 +339,12 @@ export function RegularPaymentsList() {
                     type="number"
                     placeholder="0.00"
                     value={newPayment.amount}
-                    onChange={(e) => setNewPayment({ ...newPayment, amount: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) =>
+                      setNewPayment({
+                        ...newPayment,
+                        amount: parseFloat(e.target.value) || 0,
+                      })
+                    }
                     className="pl-7 w-full"
                     step="0.01"
                     min="0"
@@ -327,11 +360,7 @@ export function RegularPaymentsList() {
                 >
                   <Check className="h-4 w-4" />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleCancelNew}
-                >
+                <Button variant="ghost" size="icon" onClick={handleCancelNew}>
                   <X className="h-4 w-4" />
                 </Button>
               </div>
