@@ -12,7 +12,13 @@ import appCss from "~/styles/app.css?url";
 import { seo } from "~/utils/seo";
 
 // Create a client
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes - data stays fresh for 5 minutes
+    },
+  },
+});
 
 export const Route = createRootRoute({
   head: () => ({

@@ -336,7 +336,9 @@ export function useCreateRegularPaymentMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payment: RegularPaymentDto): Promise<{ success: boolean }> => {
+    mutationFn: async (
+      payment: RegularPaymentDto
+    ): Promise<{ success: boolean }> => {
       try {
         console.log("Creating regular payment:", payment);
         const response = await createRegularPayment({ data: payment });
@@ -358,7 +360,9 @@ export function useUpdateRegularPaymentMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payment: RegularPaymentDto): Promise<{ success: boolean }> => {
+    mutationFn: async (
+      payment: RegularPaymentDto
+    ): Promise<{ success: boolean }> => {
       try {
         console.log("Updating regular payment:", payment);
         const response = await updateRegularPayment({ data: payment });
