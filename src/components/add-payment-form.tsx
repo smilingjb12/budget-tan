@@ -11,33 +11,49 @@ import { useState } from "react";
 
 interface AddPaymentFormProps {
   onCancel: () => void;
+  value?: RegularPaymentDto;
+  onChange?: (payment: RegularPaymentDto) => void;
+  hideActions?: boolean;
 }
 
-export function AddPaymentForm({ onCancel }: AddPaymentFormProps) {
+export function AddPaymentForm({
+  onCancel,
+  value,
+  onChange,
+  hideActions,
+}: AddPaymentFormProps) {
   const createMutation = useCreateRegularPaymentMutation();
 
-  const [newPayment, setNewPayment] = useState<RegularPaymentDto>({
+  const [internalPayment, setInternalPayment] = useState<RegularPaymentDto>({
     name: "",
     amount: 0,
   });
 
+  const payment = value ?? internalPayment;
+
+  const updatePayment = (next: RegularPaymentDto) => {
+    if (onChange) {
+      onChange(next);
+    } else {
+      setInternalPayment(next);
+    }
+  };
+
   const handleSave = () => {
-    createMutation.mutate(newPayment, {
+    createMutation.mutate(payment, {
       onSuccess: () => {
-        setNewPayment({
-          name: "",
-          amount: 0,
-        });
+        if (!onChange) {
+          setInternalPayment({ name: "", amount: 0 });
+        }
         onCancel();
       },
     });
   };
 
   const handleCancel = () => {
-    setNewPayment({
-      name: "",
-      amount: 0,
-    });
+    if (!onChange) {
+      setInternalPayment({ name: "", amount: 0 });
+    }
     onCancel();
   };
 
@@ -46,10 +62,8 @@ export function AddPaymentForm({ onCancel }: AddPaymentFormProps) {
       <div className="flex-1 space-y-2">
         <Input
           placeholder="Name"
-          value={newPayment.name}
-          onChange={(e) =>
-            setNewPayment({ ...newPayment, name: e.target.value })
-          }
+          value={payment.name}
+          onChange={(e) => updatePayment({ ...payment, name: e.target.value })}
           className="w-full"
         />
         <div className="relative">
@@ -59,10 +73,10 @@ export function AddPaymentForm({ onCancel }: AddPaymentFormProps) {
           <Input
             type="number"
             placeholder="0.00"
-            value={newPayment.amount}
+            value={payment.amount}
             onChange={(e) =>
-              setNewPayment({
-                ...newPayment,
+              updatePayment({
+                ...payment,
                 amount: parseFloat(e.target.value) || 0,
               })
             }
@@ -72,19 +86,21 @@ export function AddPaymentForm({ onCancel }: AddPaymentFormProps) {
           />
         </div>
       </div>
-      <div className="flex items-center space-x-1">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleSave}
-          disabled={createMutation.isPending}
-        >
-          <Check className="h-4 w-4" />
-        </Button>
-        <Button variant="ghost" size="icon" onClick={handleCancel}>
-          <X className="h-4 w-4" />
-        </Button>
-      </div>
+      {!hideActions && (
+        <div className="flex items-center space-x-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleSave}
+            disabled={createMutation.isPending}
+          >
+            <Check className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleCancel}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

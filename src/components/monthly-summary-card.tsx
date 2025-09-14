@@ -162,27 +162,6 @@ export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
     totalPreviousMonthAmount
   );
 
-  if (filteredCategories.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          {isLoading ? (
-            <div className="py-8">
-              <LoadingIndicator className="h-24" />
-              <p className="text-center text-muted-foreground mt-4">
-                Loading {viewType} data for {monthName} {yearString}...
-              </p>
-            </div>
-          ) : (
-            <p className="text-center text-muted-foreground py-8">
-              No {viewType} data available for {monthName} {yearString}.
-            </p>
-          )}
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -224,39 +203,56 @@ export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
         )}
       </CardHeader>
       <CardContent className="p-3">
-        {hasValidData && (
-          <CategoryProgressSection
-            sortedCategories={sortedCategories}
-            totalMonthlyAmount={totalMonthlyAmount}
-          />
-        )}
-
-        <div className="space-y-2 mt-4">
-          {sortedCategories.map((category) => {
-            const diff = formatDifference(
-              category.difference,
-              category.previousMonthExpenses
-            );
-
-            const categoryData = categories?.find(
-              (c) => c.name === category.categoryName
-            );
-
-            return (
-              <CategoryRecords
-                key={category.categoryName}
-                categoryName={category.categoryName}
-                categoryId={categoryData?.id || 0}
-                year={year}
-                month={month}
-                totalExpenses={Number(category.total)}
-                icon={category.icon}
-                difference={diff || undefined}
-                isExpense={category.isExpense}
+        {isLoading ? (
+          <div className="py-8">
+            <LoadingIndicator className="h-24" />
+            <p className="text-center text-muted-foreground mt-4">
+              Loading {viewType} data for {monthName} {yearString}...
+            </p>
+          </div>
+        ) : (
+          <>
+            {hasValidData && (
+              <CategoryProgressSection
+                sortedCategories={sortedCategories}
+                totalMonthlyAmount={totalMonthlyAmount}
               />
-            );
-          })}
-        </div>
+            )}
+
+            {filteredCategories.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">
+                No {viewType} data available for {monthName} {yearString}.
+              </p>
+            ) : (
+              <div className="space-y-2 mt-4">
+                {sortedCategories.map((category) => {
+                  const diff = formatDifference(
+                    category.difference,
+                    category.previousMonthExpenses
+                  );
+
+                  const categoryData = categories?.find(
+                    (c) => c.name === category.categoryName
+                  );
+
+                  return (
+                    <CategoryRecords
+                      key={category.categoryName}
+                      categoryName={category.categoryName}
+                      categoryId={categoryData?.id || 0}
+                      year={year}
+                      month={month}
+                      totalExpenses={Number(category.total)}
+                      icon={category.icon}
+                      difference={diff || undefined}
+                      isExpense={category.isExpense}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </>
+        )}
       </CardContent>
     </Card>
   );

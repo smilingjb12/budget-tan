@@ -3,6 +3,14 @@
 import { Button } from "~/components/ui/button";
 import { CardContent, CardFooter } from "~/components/ui/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import {
   useRegularPaymentsQuery,
   RegularPaymentDto,
 } from "~/lib/queries";
@@ -11,6 +19,7 @@ import { useEffect, useState } from "react";
 import LoadingIndicator from "./loading-indicator";
 import { RegularPaymentItem } from "./regular-payment-item";
 import { AddPaymentForm } from "./add-payment-form";
+import { useCreateRegularPaymentMutation } from "~/lib/queries";
 
 export function RegularPaymentsList() {
   const { data: regularPayments, isLoading, error } = useRegularPaymentsQuery();
@@ -18,6 +27,11 @@ export function RegularPaymentsList() {
   const [payments, setPayments] = useState<RegularPaymentDto[]>([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [newPayment, setNewPayment] = useState<RegularPaymentDto>({
+    name: "",
+    amount: 0,
+  });
+  const createMutation = useCreateRegularPaymentMutation();
 
   useEffect(() => {
     if (regularPayments && Array.isArray(regularPayments)) {
@@ -35,12 +49,9 @@ export function RegularPaymentsList() {
     setTotalAmount(total);
   };
 
-  const handleAddNew = () => {
-    setIsAddingNew(true);
-  };
-
   const handleCancelNew = () => {
     setIsAddingNew(false);
+    setNewPayment({ name: "", amount: 0 });
   };
 
   if (isLoading) {
@@ -61,20 +72,56 @@ export function RegularPaymentsList() {
               payment={payment}
             />
           ))}
-
-          {isAddingNew && (
-            <AddPaymentForm onCancel={handleCancelNew} />
-          )}
         </div>
       </CardContent>
 
       <CardFooter className="flex justify-between">
         <div className="flex space-x-2">
-          {!isAddingNew && (
-            <Button variant="outline" onClick={handleAddNew}>
-              <Plus className="h-4 w-4 mr-2" /> Add Payment
-            </Button>
-          )}
+          <Dialog
+            open={isAddingNew}
+            onOpenChange={(open) => {
+              setIsAddingNew(open);
+              if (!open) {
+                setNewPayment({ name: "", amount: 0 });
+              }
+            }}
+          >
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Plus className="h-4 w-4 mr-2" /> Add Payment
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Regular Payment</DialogTitle>
+              </DialogHeader>
+              <AddPaymentForm
+                onCancel={handleCancelNew}
+                value={newPayment}
+                onChange={setNewPayment}
+                hideActions
+              />
+              <DialogFooter>
+                <Button
+                  onClick={() =>
+                    createMutation.mutate(newPayment, {
+                      onSuccess: () => {
+                        setNewPayment({ name: "", amount: 0 });
+                        setIsAddingNew(false);
+                      },
+                    })
+                  }
+                  disabled={
+                    createMutation.isPending ||
+                    !newPayment.name.trim() ||
+                    (newPayment.amount ?? 0) <= 0
+                  }
+                >
+                  Add
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="font-semibold text-right">
           Total: ${totalAmount.toFixed(2)}
