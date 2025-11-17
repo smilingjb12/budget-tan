@@ -1,0 +1,1 @@
+import{e as a,r}from"./main-Cr7NtOyq.js";function c(){const t=a();return r.useEffect(()=>{const e=new Date,o=e.getFullYear(),n=e.getMonth()+1;t({to:`/app/${o}/${n}`})},[t]),null}export{c as component};

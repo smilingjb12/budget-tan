@@ -15,8 +15,8 @@ const monthSummarySchema = z.object({
 export const getMonthSummary = createServerFn({
   method: "GET",
 })
+  .inputValidator(monthSummarySchema)
   .middleware([authMiddleware])
-  .validator(monthSummarySchema)
   .handler(async ({ data: { year, month } }) => {
     return await RecordService.getMonthSummary(year, month);
   });
@@ -32,8 +32,8 @@ export const getAllTimeSummary = createServerFn({
 export const getRecordsByMonth = createServerFn({
   method: "GET",
 })
+  .inputValidator(monthSummarySchema)
   .middleware([authMiddleware])
-  .validator(monthSummarySchema)
   .handler(async ({ data: { year, month } }) => {
     return await RecordService.getRecordsByMonth(year, month);
   });
@@ -45,8 +45,8 @@ const recordIdSchema = z.object({
 export const getRecordById = createServerFn({
   method: "GET",
 })
+  .inputValidator(recordIdSchema)
   .middleware([authMiddleware])
-  .validator(recordIdSchema)
   .handler(async ({ data: { id } }) => {
     return await RecordService.getRecordById(id);
   });
@@ -54,8 +54,8 @@ export const getRecordById = createServerFn({
 export const createRecord = createServerFn({
   method: "POST",
 })
+  .inputValidator(createOrUpdateRecordSchema)
   .middleware([authMiddleware])
-  .validator(createOrUpdateRecordSchema)
   .handler(async ({ data }) => {
     return await RecordService.createRecord(data);
   });
@@ -63,8 +63,8 @@ export const createRecord = createServerFn({
 export const updateRecord = createServerFn({
   method: "POST",
 })
+  .inputValidator(createOrUpdateRecordSchema)
   .middleware([authMiddleware])
-  .validator(createOrUpdateRecordSchema)
   .handler(async ({ data }) => {
     return await RecordService.updateRecord(data);
   });
@@ -72,8 +72,8 @@ export const updateRecord = createServerFn({
 export const deleteRecord = createServerFn({
   method: "POST",
 })
+  .inputValidator(recordIdSchema)
   .middleware([authMiddleware])
-  .validator(recordIdSchema)
   .handler(async ({ data: { id } }) => {
     return await RecordService.deleteRecord(id);
   });
@@ -85,8 +85,8 @@ const searchCommentSchema = z.object({
 export const searchRecordComments = createServerFn({
   method: "GET",
 })
+  .inputValidator(searchCommentSchema)
   .middleware([authMiddleware])
-  .validator(searchCommentSchema)
   .handler(async ({ data: { comment } }) => {
     return await RecordService.searchRecordComments(comment);
   });

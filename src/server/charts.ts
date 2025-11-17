@@ -9,8 +9,8 @@ const categoryIdSchema = z.object({
 });
 
 export const getCategoryExpenses = createServerFn({ method: 'GET' })
+  .inputValidator(categoryIdSchema)
   .middleware([authMiddleware])
-  .validator(categoryIdSchema)
   .handler(async ({ data: { categoryId } }) => {
     return await ChartsService.getMonthlyTotalsByCategory(categoryId)
   })
