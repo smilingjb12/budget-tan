@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "~/components/ui/button";
-import { Badge } from "~/components/ui/badge";
 import { Input } from "~/components/ui/input";
 import {
   AlertDialog,
@@ -15,12 +14,17 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "~/components/ui/collapsible";
+import {
   RegularPaymentDto,
   useRegularPaymentsQuery,
   useUpdateRegularPaymentMutation,
   useDeleteRegularPaymentMutation,
 } from "~/lib/queries";
-import { Edit, Trash2, Check, X } from "lucide-react";
+import { Edit, Trash2, Check, X, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { usePaymentUtils } from "~/lib/hooks/use-payment-utils";
 
@@ -36,6 +40,7 @@ export function RegularPaymentItem({
   const deleteMutation = useDeleteRegularPaymentMutation();
   const { isPaymentStale, getTextColor } = usePaymentUtils();
 
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingPayment, setEditingPayment] = useState<RegularPaymentDto>({
     ...payment,
@@ -75,103 +80,120 @@ export function RegularPaymentItem({
   const displayPayment = isEditing ? editingPayment : payment;
   const isStale = isPaymentStale(payment.lastModified);
 
+  if (isEditing) {
+    return (
+      <div className="rounded-lg border bg-card p-4 space-y-3">
+        <Input
+          placeholder="Name"
+          value={displayPayment.name}
+          onChange={(e) => handleEditingChange("name", e.target.value)}
+          className="w-full"
+        />
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+            $
+          </span>
+          <Input
+            type="number"
+            placeholder="0.00"
+            value={displayPayment.amount}
+            onChange={(e) => handleEditingChange("amount", e.target.value)}
+            className="pl-7 w-full"
+            step="0.01"
+            min="0"
+          />
+        </div>
+        <div className="flex justify-end gap-2 pt-2">
+          <Button variant="outline" size="sm" onClick={handleCancelEdit}>
+            <X className="h-4 w-4 mr-1" />
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            onClick={handleSaveEdit}
+            disabled={updateMutation.isPending}
+          >
+            <Check className="h-4 w-4 mr-1" />
+            Save
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div
-      className={`flex space-x-2 ${isEditing ? "items-start" : "items-center"}`}
-    >
-      {isEditing ? (
-        <>
-          <div className="flex-1 space-y-2">
-            <Input
-              placeholder="Name"
-              value={displayPayment.name}
-              onChange={(e) => handleEditingChange("name", e.target.value)}
-              className="w-full"
-            />
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                $
-              </span>
-              <Input
-                type="number"
-                placeholder="0.00"
-                value={displayPayment.amount}
-                onChange={(e) => handleEditingChange("amount", e.target.value)}
-                className="pl-7 w-full"
-                step="0.01"
-                min="0"
-              />
-            </div>
-          </div>
-          <div className="flex items-center space-x-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleSaveEdit}
-              disabled={updateMutation.isPending}
-            >
-              <Check className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={handleCancelEdit}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="flex items-center flex-1 space-x-2">
+    <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+      <CollapsibleTrigger asChild>
+        <button className="w-full text-left rounded-lg border bg-card p-4 hover:bg-accent/50 transition-colors">
+          <div className="flex items-center gap-3">
             <div
-              className="flex-1 font-medium pl-3"
+              className="w-1 h-10 rounded-full flex-shrink-0"
               style={{
-                borderLeft: `4px solid ${getTextColor(
-                  payment.amount,
-                  payments
-                )}`,
+                backgroundColor: getTextColor(payment.amount, payments),
               }}
-            >
-              <span>{payment.name}</span>
+            />
+            <div className="flex-1 min-w-0">
+              <div className="font-medium truncate">{payment.name}</div>
+              {isStale && (
+                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                  <AlertCircle className="h-3 w-3" />
+                  <span>Needs review</span>
+                </div>
+              )}
             </div>
-            <div className="w-auto text-right font-medium">
+            <div className="text-right font-semibold">
               ${payment.amount.toFixed(2)}
             </div>
           </div>
-          <div className="flex items-center space-x-1">
-            {isStale && (
-              <Badge variant="destructive" className="text-xs">
-                Old
-              </Badge>
-            )}
-            <Button variant="ghost" size="icon" onClick={handleEditPayment}>
-              <Edit className="h-4 w-4" />
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Regular Payment</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to delete "{payment.name}"? This
-                    action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeletePayment}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </>
-      )}
-    </div>
+        </button>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div className="flex gap-2 mt-2 px-1">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEditPayment();
+            }}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 text-destructive hover:text-destructive"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Regular Payment</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete "{payment.name}"? This
+                  action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeletePayment}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
