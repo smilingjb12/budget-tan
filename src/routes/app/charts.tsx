@@ -11,7 +11,6 @@ export const Route = createFileRoute("/app/charts")({
 function ChartsPage() {
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold mb-6 px-4 py-2">Charts</h1>
       <ExpenseTrendsChart />
       <ExpensesVsIncomeChart />
       <IncomeTrendsChart />
