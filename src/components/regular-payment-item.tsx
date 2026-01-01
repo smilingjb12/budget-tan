@@ -24,7 +24,7 @@ import {
   useUpdateRegularPaymentMutation,
   useDeleteRegularPaymentMutation,
 } from "~/lib/queries";
-import { Edit, Trash2, Check, X, AlertCircle } from "lucide-react";
+import { Edit, Trash2, Check, X } from "lucide-react";
 import { useState } from "react";
 import { usePaymentUtils } from "~/lib/hooks/use-payment-utils";
 
@@ -124,25 +124,24 @@ export function RegularPaymentItem({
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
       <CollapsibleTrigger asChild>
-        <button className="w-full text-left rounded-lg border bg-card p-4 hover:bg-accent/50 transition-colors">
+        <button className="w-full text-left rounded-lg border bg-card p-3 hover:bg-accent/50 transition-colors">
           <div className="flex items-center gap-3">
             <div
-              className="w-1 h-10 rounded-full flex-shrink-0"
+              className="w-1 h-8 rounded-full flex-shrink-0"
               style={{
                 backgroundColor: getTextColor(payment.amount, payments),
               }}
             />
             <div className="flex-1 min-w-0">
               <div className="font-medium truncate">{payment.name}</div>
-              {isStale && (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-                  <AlertCircle className="h-3 w-3" />
-                  <span>Needs review</span>
-                </div>
-              )}
             </div>
-            <div className="text-right font-semibold">
-              ${payment.amount.toFixed(2)}
+            <div className="flex flex-col items-end">
+              {isStale && (
+                <span className="text-xs font-medium text-red-500">old</span>
+              )}
+              <span className="font-semibold">
+                ${payment.amount.toFixed(2)}
+              </span>
             </div>
           </div>
         </button>
