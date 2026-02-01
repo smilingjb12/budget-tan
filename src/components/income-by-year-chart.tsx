@@ -50,7 +50,7 @@ interface TooltipPayloadItem {
 const formatCurrencyNoDecimals = (value: number): string => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "EUR",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);

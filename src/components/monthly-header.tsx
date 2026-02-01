@@ -1,7 +1,7 @@
 import { MonthYearPicker } from "~/components/month-year-picker";
 import { Button } from "~/components/ui/button";
 import { useAllTimeSummaryQuery } from "~/lib/queries";
-import { formatUSD } from "~/lib/utils";
+import { formatEUR } from "~/lib/utils";
 import { AddRecordDialog } from "~/components/add-record-dialog";
 
 // Define view type for toggling between expenses and income
@@ -52,7 +52,7 @@ export function MonthlyHeader({
                   isPositiveBalance ? "text-green-400" : "text-red-400"
                 } cursor-pointer hover:underline`}
               >
-                <span>{formatUSD(balance)}</span>
+                <span>{formatEUR(balance)}</span>
               </div>
             }
           />

@@ -1,7 +1,7 @@
 import { SegmentedProgress } from "~/components/ui/segmented-progress";
 import { useCategoryColors } from "~/lib/hooks/use-category-colors";
 import { useCategoryIcon } from "~/lib/hooks/use-category-icon";
-import { formatUSD } from "~/lib/utils";
+import { formatEUR } from "~/lib/utils";
 
 type Category = {
   categoryName: string;
@@ -37,7 +37,7 @@ export function CategoryProgressSection({
                   <span>{category.categoryName}</span>
                 </div>
                 <div className="text-xs mt-1">
-                  {formatUSD(Number(category.totalValue))} (
+                  {formatEUR(Number(category.totalValue))} (
                   {(
                     (Number(category.totalValue) / totalMonthlyAmount) *
                     100

@@ -277,20 +277,17 @@ export function useDeleteRecordMutation() {
   });
 }
 
-// Exchange rate query
+// Exchange rate query (EUR to PLN)
 export function useExchangeRateQuery() {
   return useQuery({
     queryKey: QueryKeys.exchangeRate(),
     queryFn: async () => {
       try {
         const response = await getExchangeRate({});
-        console.log("Exchange rate response:", response);
-        return (
-          response || { rate: 4.0, lastUpdatedAt: new Date().toISOString() }
-        );
+        return response; // Can be null if no rate available
       } catch (error) {
         console.error("Exchange rate query error:", error);
-        return { rate: 4.0, lastUpdatedAt: new Date().toISOString() };
+        return null;
       }
     },
     staleTime: 1000 * 60 * 60, // 1 hour

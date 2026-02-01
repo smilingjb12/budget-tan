@@ -91,7 +91,7 @@ export function RegularPaymentItem({
         />
         <div className="relative">
           <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
-            $
+            €
           </span>
           <Input
             type="number"
@@ -140,7 +140,7 @@ export function RegularPaymentItem({
                 <span className="text-xs font-medium text-red-500">old</span>
               )}
               <span className="font-semibold">
-                ${payment.amount.toFixed(2)}
+                €{payment.amount.toFixed(2)}
               </span>
             </div>
           </div>

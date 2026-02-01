@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { useMonthNavigation } from "~/lib/hooks/use-month-navigation";
 import { useMonthSummaryQuery, useCategoriesQuery } from "~/lib/queries";
 import { Month, Routes } from "~/lib/routes";
-import { formatUSD } from "~/lib/utils";
+import { formatEUR } from "~/lib/utils";
 import { format } from "date-fns";
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter, useParams } from "@tanstack/react-router";
@@ -147,7 +147,7 @@ export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
     const absValue = Math.abs(difference);
 
     return {
-      text: `$${absValue.toFixed(2)}`,
+      text: `€${absValue.toFixed(2)}`,
       icon: isMore ? (
         <ArrowUp className="h-4 w-4" />
       ) : (
@@ -174,7 +174,7 @@ export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <CardTitle className="flex items-center justify-center flex-col">
-          {formatUSD(totalMonthlyAmount)}
+          {formatEUR(totalMonthlyAmount)}
           {monthDiff ? (
             <span
               className={`ml-2 text-sm items-center inline-flex ${monthDiff.color}`}
@@ -184,7 +184,7 @@ export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
             </span>
           ) : (
             <span className="ml-2 text-sm items-center inline-flex invisible">
-              $0.00
+              €0.00
               <ArrowDown className="h-4 w-4" />
             </span>
           )}

@@ -15,9 +15,9 @@ export function formatEuro(money: number): string {
   return `€ ${value}`;
 }
 
-export function formatUSD(amount: number): string {
+export function formatEUR(amount: number): string {
   const isWholeNumber = amount % 1 === 0;
-  return `$${amount.toLocaleString("en-US", {
+  return `€${amount.toLocaleString("en-US", {
     minimumFractionDigits: isWholeNumber ? 0 : 2,
     maximumFractionDigits: 2,
   })}`;
@@ -36,7 +36,7 @@ export function nameof<T>(key: keyof T): keyof T {
 }
 
 export function formatCurrency(amount: number): string {
-  return formatUSD(amount);
+  return formatEUR(amount);
 }
 
 export async function fetchWithErrorHandling<T>(

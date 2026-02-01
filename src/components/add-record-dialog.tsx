@@ -72,11 +72,11 @@ export function AddRecordDialog({
   const { prevMonth, prevYear } = usePreviousMonth(month, year);
   const isEditMode = !!recordId;
 
-  // State for PLN and USD values
+  // State for PLN and EUR values
   const [plnValue, setPlnValue] = useState<string>("");
-  const [usdValue, setUsdValue] = useState<string>("");
+  const [eurValue, setEurValue] = useState<string>("");
   const [, setIsUpdatingPln] = useState(false);
-  const [, setIsUpdatingUsd] = useState(false);
+  const [, setIsUpdatingEur] = useState(false);
 
   // Fetch exchange rate
   const {
@@ -114,8 +114,8 @@ export function AddRecordDialog({
     },
   });
 
-  // Convert PLN to USD
-  const convertPlnToUsd = useCallback(
+  // Convert PLN to EUR
+  const convertPlnToEur = useCallback(
     (pln: string) => {
       if (!pln || !exchangeRate) return "";
       const plnAmount = parseFloat(pln);
@@ -125,13 +125,13 @@ export function AddRecordDialog({
     [exchangeRate]
   );
 
-  // Convert USD to PLN
-  const convertUsdToPln = useCallback(
-    (usd: string) => {
-      if (!usd || !exchangeRate) return "";
-      const usdAmount = parseFloat(usd);
-      if (isNaN(usdAmount)) return "";
-      return (usdAmount * exchangeRate).toFixed(2);
+  // Convert EUR to PLN
+  const convertEurToPln = useCallback(
+    (eur: string) => {
+      if (!eur || !exchangeRate) return "";
+      const eurAmount = parseFloat(eur);
+      if (isNaN(eurAmount)) return "";
+      return (eurAmount * exchangeRate).toFixed(2);
     },
     [exchangeRate]
   );
@@ -142,33 +142,33 @@ export function AddRecordDialog({
     setPlnValue(value);
     form.setValue("value", value);
 
-    // Convert to USD
-    const newUsdValue = convertPlnToUsd(value);
-    setUsdValue(newUsdValue);
+    // Convert to EUR
+    const newEurValue = convertPlnToEur(value);
+    setEurValue(newEurValue);
     setIsUpdatingPln(false);
   };
 
-  // Handle USD input change
-  const handleUsdChange = (value: string) => {
-    setIsUpdatingUsd(true);
-    setUsdValue(value);
+  // Handle EUR input change
+  const handleEurChange = (value: string) => {
+    setIsUpdatingEur(true);
+    setEurValue(value);
 
     // Convert to PLN and update form
-    const newPlnValue = convertUsdToPln(value);
+    const newPlnValue = convertEurToPln(value);
     setPlnValue(newPlnValue);
     form.setValue("value", newPlnValue);
-    setIsUpdatingUsd(false);
+    setIsUpdatingEur(false);
   };
 
   // Set default values or populate form with record data when available
   useEffect(() => {
     if (isEditMode && recordData && exchangeRate) {
-      // For edit mode, we get USD value from backend
-      const usd = recordData.value.toString();
-      setUsdValue(usd);
+      // For edit mode, we get EUR value from backend
+      const eur = recordData.value.toString();
+      setEurValue(eur);
 
-      // Convert USD to PLN
-      const pln = convertUsdToPln(usd);
+      // Convert EUR to PLN
+      const pln = convertEurToPln(eur);
       setPlnValue(pln);
 
       form.reset({
@@ -189,7 +189,7 @@ export function AddRecordDialog({
     recordData,
     getDefaultCategoryId,
     exchangeRate,
-    convertUsdToPln,
+    convertEurToPln,
   ]);
 
   // Add state for comment input
@@ -244,17 +244,17 @@ export function AddRecordDialog({
         dateUtc = date.toISOString();
       }
 
-      // Use USD value directly
-      const usdAmount = parseFloat(usdValue);
-      if (isNaN(usdAmount)) {
-        throw new Error("USD value is invalid");
+      // Use EUR value directly
+      const eurAmount = parseFloat(eurValue);
+      if (isNaN(eurAmount)) {
+        throw new Error("EUR value is invalid");
       }
 
       // Create a request body that matches our Zod schema
       const requestBody: CreateOrUpdateRecordRequest = {
         ...(isEditMode && recordId ? { id: recordId } : {}),
         categoryId: parseInt(values.categoryId),
-        value: usdAmount, // Send USD value
+        value: eurAmount, // Send EUR value
         comment: values.comment,
         dateUtc: dateUtc,
         isExpense: !isIncome,
@@ -297,9 +297,9 @@ export function AddRecordDialog({
         comment: "",
       });
 
-      // Reset PLN and USD values
+      // Reset PLN and EUR values
       setPlnValue("");
-      setUsdValue("");
+      setEurValue("");
 
       if (onSuccess) {
         onSuccess();
@@ -357,7 +357,7 @@ export function AddRecordDialog({
               comment: "",
             });
             setPlnValue("");
-            setUsdValue("");
+            setEurValue("");
           }
         }}
       >
@@ -411,6 +411,7 @@ export function AddRecordDialog({
                         value={plnValue}
                         onChange={(e) => handlePlnChange(e.target.value)}
                         className="pr-10"
+                        disabled={!exchangeRate || isLoadingExchangeRate}
                       />
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-lg font-medium">
                         zł
@@ -422,21 +423,20 @@ export function AddRecordDialog({
                       <Input
                         type="number"
                         step="0.01"
-                        placeholder="USD"
-                        value={usdValue}
-                        onChange={(e) => handleUsdChange(e.target.value)}
+                        placeholder="EUR"
+                        value={eurValue}
+                        onChange={(e) => handleEurChange(e.target.value)}
                         className="pr-10"
-                        disabled={isLoadingExchangeRate || isExchangeRateError}
                       />
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-lg font-medium">
-                        $
+                        €
                       </span>
                     </div>
                   </FormItem>
                 </div>
-                {isExchangeRateError && (
-                  <div className="text-sm text-destructive">
-                    Exchange rate unavailable. Cannot save record.
+                {!exchangeRate && !isLoadingExchangeRate && (
+                  <div className="text-sm text-muted-foreground">
+                    Exchange rate unavailable - enter EUR directly
                   </div>
                 )}
                 <div className="hidden">
@@ -476,17 +476,12 @@ export function AddRecordDialog({
                     variant="default"
                     className="h-10"
                     type="submit"
-                    disabled={
-                      recordMutation.isPending ||
-                      isExchangeRateError ||
-                      isLoadingExchangeRate ||
-                      !exchangeRate
-                    }
+                    disabled={recordMutation.isPending || !eurValue}
                     isLoading={recordMutation.isPending}
                   >
                     {isEditMode
-                      ? `Update${usdValue ? ` ($${usdValue})` : ""}`
-                      : `Add${usdValue ? ` ($${usdValue})` : ""}`}
+                      ? `Update${eurValue ? ` (€${eurValue})` : ""}`
+                      : `Add${eurValue ? ` (€${eurValue})` : ""}`}
                   </ActionButton>
                 </div>
                 <FormField
@@ -568,7 +563,7 @@ export function AddRecordDialog({
             comment: "",
           });
           setPlnValue("");
-          setUsdValue("");
+          setEurValue("");
         }
       }}
     >
@@ -639,6 +634,7 @@ export function AddRecordDialog({
                       value={plnValue}
                       onChange={(e) => handlePlnChange(e.target.value)}
                       className="pr-10"
+                      disabled={!exchangeRate || isLoadingExchangeRate}
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-lg font-medium">
                       zł
@@ -650,21 +646,20 @@ export function AddRecordDialog({
                     <Input
                       type="number"
                       step="0.01"
-                      placeholder="USD"
-                      value={usdValue}
-                      onChange={(e) => handleUsdChange(e.target.value)}
+                      placeholder="EUR"
+                      value={eurValue}
+                      onChange={(e) => handleEurChange(e.target.value)}
                       className="pr-10"
-                      disabled={isLoadingExchangeRate || isExchangeRateError}
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-lg font-medium">
-                      $
+                      €
                     </span>
                   </div>
                 </FormItem>
               </div>
-              {isExchangeRateError && (
-                <div className="text-sm text-destructive">
-                  Exchange rate unavailable. Cannot save record.
+              {!exchangeRate && !isLoadingExchangeRate && (
+                <div className="text-sm text-muted-foreground">
+                  Exchange rate unavailable - enter EUR directly
                 </div>
               )}
               <div className="hidden">
@@ -704,17 +699,12 @@ export function AddRecordDialog({
                   variant="default"
                   className="h-10"
                   type="submit"
-                  disabled={
-                    recordMutation.isPending ||
-                    isExchangeRateError ||
-                    isLoadingExchangeRate ||
-                    !exchangeRate
-                  }
+                  disabled={recordMutation.isPending || !eurValue}
                   isLoading={recordMutation.isPending}
                 >
                   {isEditMode
-                    ? `Update${usdValue ? ` ($${usdValue})` : ""}`
-                    : `Add${usdValue ? ` ($${usdValue})` : ""}`}
+                    ? `Update${eurValue ? ` (€${eurValue})` : ""}`
+                    : `Add${eurValue ? ` (€${eurValue})` : ""}`}
                 </ActionButton>
               </div>
               <FormField

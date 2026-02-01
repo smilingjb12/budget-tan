@@ -17,36 +17,39 @@ interface ExchangeRateResponse {
 }
 
 export class ExchangeRateService {
-  static async getExchangeRate(): Promise<ExchangeRateDto> {
+  static async getExchangeRate(): Promise<ExchangeRateDto | null> {
+    // Check if we have a cached exchange rate in the database
+    const existingRates = await db.select().from(exchangeRates);
+    const cachedRate = existingRates[0];
+
+    // Helper to return cached rate as DTO
+    const getCachedRateDto = (): ExchangeRateDto | null => {
+      if (!cachedRate) return null;
+      return {
+        rate: parseFloat((cachedRate.rate as unknown as string) ?? "0"),
+        lastUpdatedAt: cachedRate.lastUpdatedAt.toISOString(),
+      };
+    };
+
+    // If we have a rate and it's less than a day old, return it
+    if (
+      cachedRate &&
+      isBefore(new Date(), addDays(cachedRate.lastUpdatedAt, 1))
+    ) {
+      return getCachedRateDto();
+    }
+
+    // Otherwise, try to fetch a new rate from the API
+    const apiKey = process.env.EXCHANGE_RATE_API_KEY;
+    if (!apiKey) {
+      // If no API key, return cached rate if available, otherwise null
+      console.warn("EXCHANGE_RATE_API_KEY not set");
+      return getCachedRateDto();
+    }
+
     try {
-      // Check if we have a recent exchange rate in the database
-      const existingRates = await db.select().from(exchangeRates);
-      const latestRate = existingRates[0];
-
-      // If we have a rate and it's less than a day old, return it
-      if (
-        latestRate &&
-        isBefore(new Date(), addDays(latestRate.lastUpdatedAt, 1))
-      ) {
-        return {
-          rate: parseFloat((latestRate.rate as unknown as string) ?? "0"),
-          lastUpdatedAt: latestRate.lastUpdatedAt.toISOString(),
-        };
-      }
-
-      // Otherwise, fetch a new rate from the API
-      const apiKey = process.env.EXCHANGE_RATE_API_KEY;
-      if (!apiKey) {
-        // If no API key, return a default rate to allow the app to function
-        console.warn("EXCHANGE_RATE_API_KEY not set, using default rate");
-        return {
-          rate: 4.0, // Default USD to PLN rate
-          lastUpdatedAt: new Date().toISOString(),
-        };
-      }
-
       const response = await fetch(
-        `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`
+        `https://v6.exchangerate-api.com/v6/${apiKey}/latest/EUR`
       );
 
       if (!response.ok) {
@@ -58,14 +61,14 @@ export class ExchangeRateService {
 
       // Update or insert the rate in the database
       const now = new Date();
-      if (latestRate) {
+      if (cachedRate) {
         await db
           .update(exchangeRates)
           .set({
             rate: plnRate.toString(),
             lastUpdatedAt: now,
           })
-          .where(eq(exchangeRates.id, latestRate.id));
+          .where(eq(exchangeRates.id, cachedRate.id));
       } else {
         await db.insert(exchangeRates).values({
           rate: plnRate.toString(),
@@ -79,11 +82,8 @@ export class ExchangeRateService {
       };
     } catch (error) {
       console.error("Error fetching exchange rate:", error);
-      // Return a fallback rate to allow the app to function
-      return {
-        rate: 4.0, // Default USD to PLN rate
-        lastUpdatedAt: new Date().toISOString(),
-      };
+      // If API fails, return cached rate if available, otherwise null
+      return getCachedRateDto();
     }
   }
 }

@@ -124,7 +124,7 @@ export function RegularPaymentsList() {
           </Dialog>
         </div>
         <div className="font-semibold text-right">
-          Total: ${totalAmount.toFixed(2)}
+          Total: €{totalAmount.toFixed(2)}
         </div>
       </CardFooter>
     </>

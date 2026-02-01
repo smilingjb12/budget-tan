@@ -3,9 +3,9 @@ import { useCategoryColors } from "~/lib/hooks/use-category-colors";
 import { useCategoryIcon } from "~/lib/hooks/use-category-icon";
 import { useMonthRecordsQuery } from "~/lib/queries";
 import { Month } from "~/lib/routes";
-import { cn, formatUSD } from "~/lib/utils";
+import { cn, formatEUR } from "~/lib/utils";
 import { format, parseISO } from "date-fns";
-import { CalendarDays, DollarSign } from "lucide-react";
+import { CalendarDays, Euro } from "lucide-react";
 import { useState } from "react";
 import { AddRecordDialog } from "./add-record-dialog";
 
@@ -92,7 +92,7 @@ export function CategoryRecords({
               {difference.icon}
             </span>
           )}
-          {formatUSD(totalExpenses)}
+          {formatEUR(totalExpenses)}
         </span>
       </div>
 
@@ -133,7 +133,7 @@ export function CategoryRecords({
                     aria-label="Sort by value"
                     className="flex justify-center"
                   >
-                    <DollarSign className="h-4 w-4 mr-1" />
+                    <Euro className="h-4 w-4 mr-1" />
                     Value
                   </ToggleGroupItem>
                 </ToggleGroup>
@@ -157,7 +157,7 @@ export function CategoryRecords({
                             </span>
                           </div>
                           <span className="font-medium text-md">
-                            {formatUSD(record.value)}
+                            {formatEUR(record.value)}
                           </span>
                         </div>
                         {record.comment && (
