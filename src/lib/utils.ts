@@ -79,3 +79,25 @@ export function createJsonPostOptions<T>(data: T): RequestInit {
     body: JSON.stringify(data),
   };
 }
+
+/**
+ * Normalizes an item name by trimming whitespace, converting to lowercase,
+ * and replacing Polish diacritics with their Latin equivalents.
+ */
+export function normalizeItemName(value: string): string {
+  const polishMap: Record<string, string> = {
+    ą: "a",
+    ć: "c",
+    ę: "e",
+    ł: "l",
+    ń: "n",
+    ó: "o",
+    ś: "s",
+    ź: "z",
+    ż: "z",
+  };
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[ąćęłńóśźż]/g, (char) => polishMap[char] || char);
+}

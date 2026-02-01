@@ -35,11 +35,14 @@ import {
   getCategoryExpenses,
   getMonthlyExpensesVsIncome,
   getIncomeTrends,
+  getUniqueComments,
+  getExpensesByItems,
 } from "~/server/charts";
 import {
   MonthlyTotalsDto,
   MonthlyExpensesVsIncomeDto,
   IncomeTrendsDto,
+  ExpenseByItemResponseDto,
 } from "~/services/charts-service";
 
 // Re-export types
@@ -48,6 +51,7 @@ export type {
   MonthlyTotalsDto,
   MonthlyExpensesVsIncomeDto,
   IncomeTrendsDto,
+  ExpenseByItemResponseDto,
 } from "~/services/charts-service";
 
 // Categories queries
@@ -462,5 +466,48 @@ export function useIncomeTrendsQuery() {
         return [];
       }
     },
+  });
+}
+
+// Unique comments query (for expense by item chart autocomplete)
+export function useUniqueCommentsQuery() {
+  return useQuery<string[]>({
+    queryKey: QueryKeys.uniqueComments(),
+    queryFn: async () => {
+      try {
+        const response = await getUniqueComments({});
+        console.log("Unique comments response:", response);
+        return (
+          (response as unknown as { result: string[] })?.result ||
+          (response as string[]) ||
+          []
+        );
+      } catch (error) {
+        console.error("Unique comments query error:", error);
+        return [];
+      }
+    },
+  });
+}
+
+// Expenses by items query (for expense by item chart)
+export function useExpensesByItemsQuery(items: string[]) {
+  return useQuery<ExpenseByItemResponseDto>({
+    queryKey: QueryKeys.expensesByItems(items),
+    queryFn: async () => {
+      try {
+        const response = await getExpensesByItems({ data: { items } });
+        console.log("Expenses by items response:", response);
+        return (
+          (response as unknown as { result: ExpenseByItemResponseDto })
+            ?.result ||
+          (response as ExpenseByItemResponseDto) || { data: [], grandTotal: 0 }
+        );
+      } catch (error) {
+        console.error("Expenses by items query error:", error);
+        return { data: [], grandTotal: 0 };
+      }
+    },
+    enabled: items.length > 0,
   });
 }

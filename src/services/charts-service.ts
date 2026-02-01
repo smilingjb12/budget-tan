@@ -1,5 +1,6 @@
 import { db, records, categories } from "~/db";
-import { sql, eq } from "drizzle-orm";
+import { sql, eq, isNotNull, ne, and } from "drizzle-orm";
+import { normalizeItemName } from "~/lib/utils";
 
 export type MonthlyTotalsDto = {
   monthDate: string; // Format: YYYY-MM
@@ -17,6 +18,17 @@ export type IncomeTrendsDto = {
   categoryId: number;
   categoryName: string;
   total: number;
+};
+
+export type ExpenseByItemDto = {
+  monthDate: string;
+  items: Array<{ item: string; total: number }>;
+  monthlyTotal: number;
+};
+
+export type ExpenseByItemResponseDto = {
+  data: ExpenseByItemDto[];
+  grandTotal: number;
 };
 
 export const ChartsService = {
@@ -129,5 +141,97 @@ export const ChartsService = {
       categoryName: item.categoryName,
       total: parseFloat(String(item.total)),
     }));
+  },
+
+  async getUniqueComments(): Promise<string[]> {
+    const result = await db
+      .selectDistinct({
+        comment: records.comment,
+      })
+      .from(records)
+      .where(
+        and(
+          isNotNull(records.comment),
+          ne(records.comment, ""),
+          eq(records.isExpense, true)
+        )
+      )
+      .orderBy(records.comment);
+
+    // Normalize and deduplicate
+    const normalizedSet = new Set<string>();
+    result.forEach((r) => {
+      if (r.comment) {
+        normalizedSet.add(normalizeItemName(r.comment));
+      }
+    });
+
+    return Array.from(normalizedSet).sort();
+  },
+
+  async getExpensesByItems(items: string[]): Promise<ExpenseByItemResponseDto> {
+    if (items.length === 0) {
+      return { data: [], grandTotal: 0 };
+    }
+
+    // Fetch all expense records with non-empty comments
+    const result = await db
+      .select({
+        year: sql<number>`EXTRACT(YEAR FROM ${records.date})`,
+        month: sql<number>`EXTRACT(MONTH FROM ${records.date})`,
+        comment: records.comment,
+        value: records.value,
+      })
+      .from(records)
+      .where(
+        and(
+          eq(records.isExpense, true),
+          isNotNull(records.comment),
+          ne(records.comment, "")
+        )
+      );
+
+    // Normalize items for comparison
+    const normalizedItems = new Set(items.map((item) => normalizeItemName(item)));
+
+    // Group by month and normalized comment
+    const monthlyData: Record<
+      string,
+      {
+        items: Record<string, number>;
+        monthlyTotal: number;
+      }
+    > = {};
+    let grandTotal = 0;
+
+    result.forEach((row) => {
+      if (!row.comment) return;
+
+      const normalizedComment = normalizeItemName(row.comment);
+      if (!normalizedItems.has(normalizedComment)) return;
+
+      const monthDate = `${row.year}-${row.month.toString().padStart(2, "0")}`;
+      const value = parseFloat(String(row.value));
+
+      if (!monthlyData[monthDate]) {
+        monthlyData[monthDate] = { items: {}, monthlyTotal: 0 };
+      }
+
+      monthlyData[monthDate].items[normalizedComment] =
+        (monthlyData[monthDate].items[normalizedComment] || 0) + value;
+      monthlyData[monthDate].monthlyTotal += value;
+      grandTotal += value;
+    });
+
+    // Transform to ExpenseByItemDto format
+    const data: ExpenseByItemDto[] = Object.entries(monthlyData)
+      .map(([monthDate, { items, monthlyTotal }]) => ({
+        monthDate,
+        items: Object.entries(items).map(([item, total]) => ({ item, total })),
+        monthlyTotal,
+      }))
+      .sort((a, b) => a.monthDate.localeCompare(b.monthDate));
+
+    return { data, grandTotal };
   },
 };

@@ -28,3 +28,22 @@ export const getIncomeTrends = createServerFn({ method: 'GET' })
   .handler(async () => {
     return await ChartsService.getMonthlyIncomeByCategories()
   })
+
+// Get unique comment values for autocomplete (normalized)
+export const getUniqueComments = createServerFn({ method: 'GET' })
+  .middleware([authMiddleware])
+  .handler(async () => {
+    return await ChartsService.getUniqueComments()
+  })
+
+// Get expenses by selected items
+const expensesByItemsSchema = z.object({
+  items: z.array(z.string()).min(1),
+});
+
+export const getExpensesByItems = createServerFn({ method: 'GET' })
+  .middleware([authMiddleware])
+  .validator(expensesByItemsSchema)
+  .handler(async ({ data: { items } }) => {
+    return await ChartsService.getExpensesByItems(items)
+  })
