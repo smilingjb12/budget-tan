@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
-  useUniqueCommentsQuery,
+  useUniqueCommentsGroupedQuery,
   useExpensesByItemsQuery,
   ExpenseByItemResponseDto,
 } from "~/lib/queries";
@@ -19,7 +19,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { MultiSelectCombobox } from "~/components/ui/multi-select-combobox";
+import { GroupedMultiSelectCombobox } from "~/components/ui/grouped-multi-select-combobox";
 
 // Color palette for items
 const COLORS = [
@@ -105,9 +105,9 @@ export function ExpenseByItemChart() {
   const [hasInitiallyScrolled, setHasInitiallyScrolled] = useState(false);
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch unique comments for autocomplete
-  const { data: allComments, isLoading: isCommentsLoading } =
-    useUniqueCommentsQuery();
+  // Fetch unique comments grouped by category
+  const { data: groupedComments, isLoading: isCommentsLoading } =
+    useUniqueCommentsGroupedQuery();
 
   // Fetch expense data for selected items
   const { data: expenseData, isLoading: isExpensesLoading } =
@@ -223,10 +223,10 @@ export function ExpenseByItemChart() {
 
         {/* Multi-Select for Items */}
         <div className="mb-6">
-          <MultiSelectCombobox
+          <GroupedMultiSelectCombobox
             value={selectedItems}
             onChange={setSelectedItems}
-            options={allComments || []}
+            groupedOptions={groupedComments || []}
             placeholder="Select items to track..."
             searchPlaceholder="Search items..."
             emptyMessage={

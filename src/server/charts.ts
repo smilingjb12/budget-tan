@@ -36,6 +36,13 @@ export const getUniqueComments = createServerFn({ method: 'GET' })
     return await ChartsService.getUniqueComments()
   })
 
+// Get unique comments grouped by their most common category
+export const getUniqueCommentsGrouped = createServerFn({ method: 'GET' })
+  .middleware([authMiddleware])
+  .handler(async () => {
+    return await ChartsService.getUniqueCommentsGroupedByCategory()
+  })
+
 // Get expenses by selected items
 const expensesByItemsSchema = z.object({
   items: z.array(z.string()).min(1),

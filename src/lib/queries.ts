@@ -36,6 +36,7 @@ import {
   getMonthlyExpensesVsIncome,
   getIncomeTrends,
   getUniqueComments,
+  getUniqueCommentsGrouped,
   getExpensesByItems,
 } from "~/server/charts";
 import {
@@ -43,6 +44,7 @@ import {
   MonthlyExpensesVsIncomeDto,
   IncomeTrendsDto,
   ExpenseByItemResponseDto,
+  GroupedCommentsDto,
 } from "~/services/charts-service";
 
 // Re-export types
@@ -52,6 +54,7 @@ export type {
   MonthlyExpensesVsIncomeDto,
   IncomeTrendsDto,
   ExpenseByItemResponseDto,
+  GroupedCommentsDto,
 } from "~/services/charts-service";
 
 // Categories queries
@@ -484,6 +487,27 @@ export function useUniqueCommentsQuery() {
         );
       } catch (error) {
         console.error("Unique comments query error:", error);
+        return [];
+      }
+    },
+  });
+}
+
+// Unique comments grouped by category query
+export function useUniqueCommentsGroupedQuery() {
+  return useQuery<GroupedCommentsDto[]>({
+    queryKey: QueryKeys.uniqueCommentsGrouped(),
+    queryFn: async () => {
+      try {
+        const response = await getUniqueCommentsGrouped({});
+        console.log("Unique comments grouped response:", response);
+        return (
+          (response as unknown as { result: GroupedCommentsDto[] })?.result ||
+          (response as GroupedCommentsDto[]) ||
+          []
+        );
+      } catch (error) {
+        console.error("Unique comments grouped query error:", error);
         return [];
       }
     },

@@ -13,5 +13,6 @@ export const QueryKeys = {
   exchangeRate: () => ["exchange-rate"] as const,
   expensesVsIncome: () => ["expenses-vs-income"] as const,
   uniqueComments: () => ["unique-comments"] as const,
+  uniqueCommentsGrouped: () => ["unique-comments-grouped"] as const,
   expensesByItems: (items: string[]) => ["expenses-by-items", items] as const,
 } as const;

@@ -31,6 +31,13 @@ export type ExpenseByItemResponseDto = {
   grandTotal: number;
 };
 
+export type GroupedCommentsDto = {
+  categoryId: number;
+  categoryName: string;
+  categoryIcon: string;
+  items: string[];
+};
+
 export const ChartsService = {
   async getMonthlyTotalsByCategory(
     categoryId: number
@@ -167,6 +174,100 @@ export const ChartsService = {
     });
 
     return Array.from(normalizedSet).sort();
+  },
+
+  async getUniqueCommentsGroupedByCategory(): Promise<GroupedCommentsDto[]> {
+    // Fetch all expense records with comments, including category info
+    const result = await db
+      .select({
+        comment: records.comment,
+        categoryId: records.categoryId,
+        categoryName: categories.name,
+        categoryIcon: categories.icon,
+        categoryOrder: categories.order,
+      })
+      .from(records)
+      .innerJoin(categories, eq(records.categoryId, categories.id))
+      .where(
+        and(
+          isNotNull(records.comment),
+          ne(records.comment, ""),
+          eq(records.isExpense, true)
+        )
+      );
+
+    // Count occurrences of each normalized comment per category
+    const commentCategoryCounts: Record<
+      string,
+      Record<number, { count: number; name: string; icon: string; order: number }>
+    > = {};
+
+    result.forEach((r) => {
+      if (!r.comment) return;
+      const normalized = normalizeItemName(r.comment);
+
+      if (!commentCategoryCounts[normalized]) {
+        commentCategoryCounts[normalized] = {};
+      }
+
+      if (!commentCategoryCounts[normalized][r.categoryId]) {
+        commentCategoryCounts[normalized][r.categoryId] = {
+          count: 0,
+          name: r.categoryName,
+          icon: r.categoryIcon,
+          order: r.categoryOrder,
+        };
+      }
+
+      commentCategoryCounts[normalized][r.categoryId].count++;
+    });
+
+    // Assign each comment to its most frequently used category
+    const categoryItems: Record<
+      number,
+      { name: string; icon: string; order: number; items: Set<string> }
+    > = {};
+
+    Object.entries(commentCategoryCounts).forEach(([comment, categoryCounts]) => {
+      // Find the category with the highest count for this comment
+      let maxCount = 0;
+      let primaryCategoryId = 0;
+      let primaryCategory = { name: "", icon: "", order: 0 };
+
+      Object.entries(categoryCounts).forEach(([catIdStr, catData]) => {
+        const catId = parseInt(catIdStr, 10);
+        if (catData.count > maxCount) {
+          maxCount = catData.count;
+          primaryCategoryId = catId;
+          primaryCategory = {
+            name: catData.name,
+            icon: catData.icon,
+            order: catData.order,
+          };
+        }
+      });
+
+      // Add comment to its primary category
+      if (!categoryItems[primaryCategoryId]) {
+        categoryItems[primaryCategoryId] = {
+          ...primaryCategory,
+          items: new Set(),
+        };
+      }
+      categoryItems[primaryCategoryId].items.add(comment);
+    });
+
+    // Convert to array and sort by category order, then items alphabetically
+    return Object.entries(categoryItems)
+      .map(([catIdStr, catData]) => ({
+        categoryId: parseInt(catIdStr, 10),
+        categoryName: catData.name,
+        categoryIcon: catData.icon,
+        order: catData.order,
+        items: Array.from(catData.items).sort(),
+      }))
+      .sort((a, b) => a.order - b.order)
+      .map(({ order, ...rest }) => rest);
   },
 
   async getExpensesByItems(items: string[]): Promise<ExpenseByItemResponseDto> {
