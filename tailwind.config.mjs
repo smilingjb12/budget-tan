@@ -72,12 +72,28 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
+  			},
+  			income: {
+  				DEFAULT: 'hsl(var(--income))',
+  				muted: 'hsl(var(--income-muted))'
+  			},
+  			expense: {
+  				DEFAULT: 'hsl(var(--expense))',
+  				muted: 'hsl(var(--expense-muted))'
+  			},
+  			glass: {
+  				DEFAULT: 'hsl(var(--glass-bg))',
+  				border: 'hsl(var(--glass-border))',
+  				highlight: 'hsl(var(--glass-highlight))'
   			}
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
+  		},
+  		backdropBlur: {
+  			xs: '2px'
   		}
   	}
   },

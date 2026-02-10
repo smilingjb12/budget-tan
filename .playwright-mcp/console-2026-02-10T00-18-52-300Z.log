@@ -1,0 +1,40 @@
+[    4958ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ https://many-man-91.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js:18
+[   16831ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://many-man-91.clerk.accounts.dev/favicon.ico:0
+[   17244ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ https://many-man-91.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js:18
+[   20496ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ https://many-man-91.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js:18
+[   88311ms] [ERROR] Monthly expenses vs income query error: TypeError: Failed to fetch
+    at http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:39:36
+    at http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:77:20
+    at getResponse (http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:84:5)
+    at serverFnFetcher (http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:39:18)
+    at Object.clientFn [as extractedFn] (http://localhost:3001/node_modules/@tanstack/start-server-functions-client/dist/esm/index.js?v=201595f3:10:12)
+    at client (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:323:77)
+    at applyMiddleware (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:257:10)
+    at next (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:118:14)
+    at next (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:130:12)
+    at executeMiddleware (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:132:10) @ http://localhost:3001/src/lib/queries.ts:358
+[   88311ms] [ERROR] Income trends query error: TypeError: Failed to fetch
+    at http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:39:36
+    at http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:77:20
+    at getResponse (http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:84:5)
+    at serverFnFetcher (http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:39:18)
+    at Object.clientFn [as extractedFn] (http://localhost:3001/node_modules/@tanstack/start-server-functions-client/dist/esm/index.js?v=201595f3:10:12)
+    at client (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:323:77)
+    at applyMiddleware (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:257:10)
+    at next (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:118:14)
+    at next (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:130:12)
+    at executeMiddleware (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:132:10) @ http://localhost:3001/src/lib/queries.ts:373
+[   88311ms] [ERROR] Unique comments grouped query error: TypeError: Failed to fetch
+    at http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:39:36
+    at http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:77:20
+    at getResponse (http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:84:5)
+    at serverFnFetcher (http://localhost:3001/node_modules/@tanstack/start-server-functions-fetcher/dist/esm/index.js?v=201595f3:39:18)
+    at Object.clientFn [as extractedFn] (http://localhost:3001/node_modules/@tanstack/start-server-functions-client/dist/esm/index.js?v=201595f3:10:12)
+    at client (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:323:77)
+    at applyMiddleware (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:257:10)
+    at next (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:118:14)
+    at next (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:130:12)
+    at executeMiddleware (http://localhost:3001/node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js?v=201595f3:132:10) @ http://localhost:3001/src/lib/queries.ts:403
+[   89134ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ https://many-man-91.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js:18
+[  116700ms] [WARNING] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. @ http://localhost:3001/node_modules/.vite/deps/chunk-3XY6HROE.js?v=47f46260:337
+[  116702ms] [WARNING] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. @ http://localhost:3001/node_modules/.vite/deps/chunk-3XY6HROE.js?v=47f46260:337

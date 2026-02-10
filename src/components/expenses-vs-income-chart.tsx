@@ -164,17 +164,17 @@ export function ExpensesVsIncomeChart() {
       const year = dataPoint.year;
 
       return (
-        <div className="bg-background/90 p-2 border border-border rounded-md shadow-md text-xs">
+        <div className="glass-strong p-2 rounded-lg text-xs">
           <p className="font-medium">{`${label} ${year}`}</p>
-          <p className="text-yellow-500">{`Expenses: ${formatCurrency(
+          <p className="text-expense">{`Expenses: ${formatCurrency(
             expenseValue || 0
           )}`}</p>
-          <p className="text-green-500">{`Income: ${formatCurrency(
+          <p className="text-income">{`Income: ${formatCurrency(
             incomeValue || 0
           )}`}</p>
           <p
             className={`font-medium ${
-              differenceValue >= 0 ? "text-green-500" : "text-red-500"
+              differenceValue >= 0 ? "text-income" : "text-expense"
             }`}
           >
             {`Balance: ${formatCurrency(differenceValue || 0)}`}
@@ -256,8 +256,8 @@ export function ExpensesVsIncomeChart() {
                         key={`cell-${index}`}
                         fill={
                           entry.difference >= 0
-                            ? "hsl(142, 76%, 36%)"
-                            : "hsl(35, 84%, 60%)"
+                            ? "hsl(152, 60%, 52%)"
+                            : "hsl(16, 80%, 60%)"
                         }
                       />
                     ))}

@@ -82,7 +82,7 @@ export function RegularPaymentItem({
 
   if (isEditing) {
     return (
-      <div className="rounded-lg border bg-card p-4 space-y-3">
+      <div className="rounded-lg glass-inner p-4 space-y-3">
         <Input
           placeholder="Name"
           value={displayPayment.name}
@@ -124,7 +124,7 @@ export function RegularPaymentItem({
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
       <CollapsibleTrigger asChild>
-        <button className="w-full text-left rounded-lg border bg-card p-3 hover:bg-accent/50 transition-colors">
+        <button className="w-full text-left rounded-lg glass-inner p-3 hover:bg-[hsl(var(--glass-bg)/0.45)] transition-all duration-200">
           <div className="flex items-center gap-3">
             <div
               className="w-1 h-8 rounded-full flex-shrink-0"
@@ -137,7 +137,7 @@ export function RegularPaymentItem({
             </div>
             <div className="flex flex-col items-end">
               {isStale && (
-                <span className="text-xs font-medium text-red-500">old</span>
+                <span className="text-xs font-medium text-expense">old</span>
               )}
               <span className="font-semibold">
                 €{payment.amount.toFixed(2)}

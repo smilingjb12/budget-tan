@@ -570,7 +570,7 @@ export function AddRecordDialog({
       <DialogTrigger asChild>
         <Button
           size="icon"
-          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-shadow bg-primary text-primary-foreground hover:bg-primary/90"
+          className="h-14 w-14 rounded-full fab-glow transition-all duration-300 bg-primary text-primary-foreground hover:bg-primary/85 hover:scale-105 active:scale-95"
           aria-label={
             isEditMode
               ? "Edit record"
@@ -737,10 +737,10 @@ export function AddRecordDialog({
                                 onClick={() =>
                                   field.onChange(category.id.toString())
                                 }
-                                className={`flex items-center justify-center aspect-square h-20 w-20 border border-input rounded-md transition-colors ${
+                                className={`flex items-center justify-center aspect-square h-20 w-20 rounded-lg transition-all duration-200 ${
                                   isSelected
-                                    ? "bg-primary text-primary-foreground"
-                                    : "bg-background hover:bg-accent hover:text-accent-foreground"
+                                    ? "bg-primary text-primary-foreground shadow-md"
+                                    : "glass-inner hover:bg-[hsl(var(--glass-bg)/0.50)]"
                                 }`}
                                 title={category.name}
                                 disabled={isSelected} // Disable button if already selected to prevent untoggling

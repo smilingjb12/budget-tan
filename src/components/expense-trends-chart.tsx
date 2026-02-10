@@ -169,9 +169,9 @@ export function ExpenseTrendsChart() {
 
     // Define color stops for the gradient
     const colorStops = [
-      { point: 0, color: { h: 142, s: 76, l: 36 } }, // Green (low)
-      { point: 0.5, color: { h: 35, s: 92, l: 58 } }, // Yellow/Orange (middle)
-      { point: 1, color: { h: 0, s: 84, l: 60 } }, // Red (high)
+      { point: 0, color: { h: 152, s: 60, l: 52 } }, // Green (low)
+      { point: 0.5, color: { h: 45, s: 85, l: 55 } }, // Golden (middle)
+      { point: 1, color: { h: 16, s: 80, l: 60 } }, // Coral (high)
     ];
 
     // Find the two color stops to interpolate between

@@ -22,10 +22,13 @@ function BottomNavItem({ icon, label, isActive, onClick }: BottomNavItemProps) {
     <button
       onClick={onClick}
       className={cn(
-        "flex flex-1 flex-col items-center justify-center py-2",
+        "relative flex flex-1 flex-col items-center justify-center py-2 transition-colors duration-200",
         isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
       )}
     >
+      {isActive && (
+        <div className="absolute -top-[1px] left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-primary transition-all duration-300" />
+      )}
       <div className="mb-1">{icon}</div>
       <span className="text-xs font-medium">{label}</span>
     </button>
@@ -42,8 +45,8 @@ function MobileBottomNav() {
   const isSettings = RouteMatchers.isSettingsRoute(pathname);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t bg-background">
-      <nav className="flex h-16 items-center justify-around px-4">
+    <div className="fixed bottom-0 left-0 right-0 glass-strong border-t border-[hsl(var(--glass-border)/0.15)]">
+      <nav className="flex h-16 items-center justify-around px-4 relative">
         <BottomNavItem
           icon={<History size={24} />}
           label="History"

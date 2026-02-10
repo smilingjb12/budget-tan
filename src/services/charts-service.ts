@@ -267,7 +267,7 @@ export const ChartsService = {
         items: Array.from(catData.items).sort(),
       }))
       .sort((a, b) => a.order - b.order)
-      .map(({ order, ...rest }) => rest);
+      .map(({ order: _, ...rest }) => rest);
   },
 
   async getExpensesByItems(items: string[]): Promise<ExpenseByItemResponseDto> {

@@ -52,7 +52,7 @@ export function SegmentedProgress({
     return (
       <div
         className={cn(
-          "relative w-full overflow-hidden rounded-full bg-secondary",
+          "relative w-full overflow-hidden rounded-full bg-[hsl(var(--glass-bg)/0.40)] backdrop-blur-sm border border-[hsl(var(--glass-border)/0.10)]",
           className
         )}
         style={{ height: `${height}px` }}
@@ -63,7 +63,7 @@ export function SegmentedProgress({
   return (
     <div
       className={cn(
-        "relative w-full overflow-hidden rounded-full bg-secondary",
+        "relative w-full overflow-hidden rounded-full bg-[hsl(var(--glass-bg)/0.40)] backdrop-blur-sm border border-[hsl(var(--glass-border)/0.10)]",
         className
       )}
       style={{ height: `${height}px` }}

@@ -17,16 +17,16 @@ import {
 
 // Generate a color palette for the categories
 const COLORS = [
-  "#8884d8", // Purple
-  "#82ca9d", // Green
-  "#ffc658", // Yellow
-  "#ff8042", // Orange
-  "#0088fe", // Blue
-  "#00C49F", // Teal
-  "#FFBB28", // Gold
-  "#a4de6c", // Light Green
-  "#d0ed57", // Lime
-  "#FF6B6B", // Red
+  "hsl(172, 66%, 50%)",  // Teal (primary)
+  "hsl(152, 60%, 52%)",  // Emerald green
+  "hsl(22, 90%, 62%)",   // Warm coral
+  "hsl(200, 70%, 55%)",  // Ocean blue
+  "hsl(280, 50%, 60%)",  // Soft violet
+  "hsl(45, 85%, 55%)",   // Golden
+  "hsl(330, 55%, 58%)",  // Rose
+  "hsl(100, 50%, 50%)",  // Lime green
+  "hsl(250, 55%, 62%)",  // Lavender
+  "hsl(10, 75%, 55%)",   // Terracotta
 ];
 
 interface IncomeDataPoint {
@@ -244,7 +244,7 @@ export function IncomeTrendsChart() {
       const dataPoint = payload[0].payload;
       
       return (
-        <div className="bg-background/90 p-2 border border-border rounded-md shadow-md text-xs">
+        <div className="glass-strong p-2 rounded-lg text-xs">
           <p className="font-medium">{`${label} ${dataPoint.year}`}</p>
           <p className="font-semibold text-primary mb-1">{`Total: ${formatCurrency(dataPoint.total)}`}</p>
           <div className="space-y-1">

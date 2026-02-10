@@ -146,20 +146,20 @@ export function MonthYearPicker({
                   "h-16 py-2 flex flex-col justify-center",
                   isCurrentMonth &&
                     !isSelected &&
-                    "border-2 border-blue-500 font-bold"
+                    "border-2 border-primary font-bold"
                 )}
                 onClick={() => handleSelectMonth(index)}
               >
                 <div className="relative w-full">
                   <span className="text-sm font-medium">{monthName}</span>
                   {isCurrentMonth && (
-                    <span className="absolute -top-1 -right-1 text-xs text-blue-500">
+                    <span className="absolute -top-1 -right-1 text-xs text-primary">
                       •
                     </span>
                   )}
                 </div>
                 <span className={`text-xs mt-1 font-medium ${
-                  profit > 0 ? "text-green-500" : profit < 0 ? "text-red-500" : "text-gray-500"
+                  profit > 0 ? "text-income" : profit < 0 ? "text-expense" : "text-muted-foreground"
                 }`}>
                   {profit !== 0 ? formatCurrency(Math.round(Math.abs(profit))) : "–"}
                 </span>

@@ -76,7 +76,7 @@ export function CategoryRecords({
     <div className="space-y-2">
       <div
         className={cn(
-          "flex justify-between items-center cursor-pointer hover:bg-muted/50 p-2 pl-3 rounded-md transition-colors border-l-4",
+          "flex justify-between items-center cursor-pointer hover:bg-[hsl(var(--glass-bg)/0.40)] p-2 pl-3 rounded-lg transition-all duration-200 border-l-4",
           getCategoryBorderColor(categoryName)
         )}
         onClick={toggleExpand}
@@ -145,7 +145,7 @@ export function CategoryRecords({
                   recordId={record.id}
                   isIncome={!isExpense}
                   trigger={
-                    <div className="flex justify-between items-center py-2 px-3 text-sm border border-border rounded-md cursor-pointer hover:bg-muted/50">
+                    <div className="flex justify-between items-center py-2 px-3 text-sm glass-inner rounded-lg cursor-pointer hover:bg-[hsl(var(--glass-bg)/0.45)] transition-all duration-200">
                       <div className="flex flex-col w-full">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1.5">

@@ -87,9 +87,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const clerkAppearance: Appearance = {
     theme: dark,
     variables: {
-      colorPrimary: "#3b82f6",
-      colorBackground: "#0f172a",
-      colorInputBackground: "#1e293b",
+      colorPrimary: "#2BB5A0",
+      colorBackground: "#0f1614",
+      colorInputBackground: "#172220",
       colorInputText: "#f8fafc",
     },
   };

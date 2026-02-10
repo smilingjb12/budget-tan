@@ -153,7 +153,7 @@ export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
       ) : (
         <ArrowDown className="h-4 w-4" />
       ),
-      color: isMore ? "text-red-400" : "text-green-400",
+      color: isMore ? "text-expense" : "text-income",
     };
   };
 

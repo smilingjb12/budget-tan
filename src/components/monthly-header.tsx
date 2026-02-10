@@ -1,7 +1,7 @@
 import { MonthYearPicker } from "~/components/month-year-picker";
 import { Button } from "~/components/ui/button";
 import { useAllTimeSummaryQuery } from "~/lib/queries";
-import { formatEUR } from "~/lib/utils";
+import { cn, formatEUR } from "~/lib/utils";
 import { AddRecordDialog } from "~/components/add-record-dialog";
 
 // Define view type for toggling between expenses and income
@@ -36,7 +36,12 @@ export function MonthlyHeader({
         <Button
           variant="outline"
           size="sm"
-          className="w-[40px]"
+          className={cn(
+            "w-[40px] transition-all duration-200",
+            viewType === "expenses"
+              ? "border-expense/40 text-expense hover:bg-expense-muted"
+              : "border-income/40 text-income hover:bg-income-muted"
+          )}
           onClick={onToggleViewType}
         >
           {viewType === "expenses" ? "E" : "I"}
@@ -49,7 +54,7 @@ export function MonthlyHeader({
             trigger={
               <div
                 className={`font-semibold text-xl ${
-                  isPositiveBalance ? "text-green-400" : "text-red-400"
+                  isPositiveBalance ? "text-income" : "text-expense"
                 } cursor-pointer hover:underline`}
               >
                 <span>{formatEUR(balance)}</span>
