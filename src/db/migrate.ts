@@ -7,31 +7,35 @@ import { Pool } from "pg";
 dotenv.config({ path: ".env.local" });
 
 async function main() {
-  console.log("Migration started...");
+    console.log("Migration started...");
 
   // Initialize PostgreSQL connection pool
   let connectionConfig;
 
   // Prefer DATABASE_URL if available (for both local and production)
   if (process.env.DATABASE_URL) {
-    console.log("Using DATABASE_URL for connection");
-    connectionConfig = {
-      connectionString: process.env.DATABASE_URL,
-      // Only use SSL in production
-      ...(process.env.NODE_ENV === "production" && {
-        ssl: { rejectUnauthorized: false },
-      }),
-    };
+        console.log("Using DATABASE_URL for connection");
+        const isInternalConnection =
+                process.env.DATABASE_URL.includes(".railway.internal");
+        connectionConfig = {
+                connectionString: process.env.DATABASE_URL,
+                // Don't use SSL for Railway internal connections (private networking)
+                // Only use SSL for external/public connections in production
+                ...(process.env.NODE_ENV === "production" &&
+                            !isInternalConnection && {
+                                        ssl: { rejectUnauthorized: false },
+                            }),
+        };
   } else {
-    // Fallback to individual parameters if DATABASE_URL is not available
-    console.log("Using individual connection parameters");
-    connectionConfig = {
-      host: process.env.POSTGRES_HOST,
-      port: Number(process.env.POSTGRES_PORT),
-      user: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DATABASE,
-    };
+        // Fallback to individual parameters if DATABASE_URL is not available
+      console.log("Using individual connection parameters");
+        connectionConfig = {
+                host: process.env.POSTGRES_HOST,
+                port: Number(process.env.POSTGRES_PORT),
+                user: process.env.POSTGRES_USER,
+                password: process.env.POSTGRES_PASSWORD,
+                database: process.env.POSTGRES_DATABASE,
+        };
   }
 
   const pool = new Pool(connectionConfig);
@@ -48,7 +52,7 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error("Migration failed");
-  console.error(err);
-  process.exit(1);
+    console.error("Migration failed");
+    console.error(err);
+    process.exit(1);
 });
