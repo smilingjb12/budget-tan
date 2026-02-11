@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { Pool } from "pg";
+import { getPgConnectionConfig } from "./connection";
 
 // Load environment variables from .env.local file
 dotenv.config({ path: ".env.local" });
@@ -9,32 +10,14 @@ dotenv.config({ path: ".env.local" });
 async function main() {
   console.log("Migration started...");
 
-  // Initialize PostgreSQL connection pool
-  let connectionConfig;
+  const usingDatabaseUrl = Boolean(process.env.DATABASE_URL);
+  console.log(
+    usingDatabaseUrl
+      ? "Using DATABASE_URL for connection"
+      : "Using individual connection parameters"
+  );
 
-  // Prefer DATABASE_URL if available (for both local and production)
-  if (process.env.DATABASE_URL) {
-    console.log("Using DATABASE_URL for connection");
-    connectionConfig = {
-      connectionString: process.env.DATABASE_URL,
-      // Only use SSL in production
-      ...(process.env.NODE_ENV === "production" && {
-        ssl: { rejectUnauthorized: false },
-      }),
-    };
-  } else {
-    // Fallback to individual parameters if DATABASE_URL is not available
-    console.log("Using individual connection parameters");
-    connectionConfig = {
-      host: process.env.POSTGRES_HOST,
-      port: Number(process.env.POSTGRES_PORT),
-      user: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DATABASE,
-    };
-  }
-
-  const pool = new Pool(connectionConfig);
+  const pool = new Pool(getPgConnectionConfig());
 
   const db = drizzle(pool);
 
