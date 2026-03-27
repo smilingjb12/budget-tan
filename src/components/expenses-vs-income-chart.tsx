@@ -177,7 +177,7 @@ export function ExpensesVsIncomeChart() {
               differenceValue >= 0 ? "text-income" : "text-expense"
             }`}
           >
-            {`Balance: ${formatCurrency(differenceValue || 0)}`}
+            {`Profit: ${formatCurrency(differenceValue || 0)}`}
           </p>
         </div>
       );
