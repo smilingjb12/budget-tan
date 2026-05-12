@@ -151,7 +151,7 @@ export const RecordService = {
     }));
   },
 
-  async createRecord(request: CreateOrUpdateRecordRequest) {
+  async createRecord(request: CreateOrUpdateRecordRequest): Promise<void> {
     const date = new Date(request.dateUtc);
     const row: typeof records.$inferInsert = {
       categoryId: request.categoryId,
@@ -160,10 +160,10 @@ export const RecordService = {
       comment: request.comment?.trim() || null,
       isExpense: request.isExpense,
     };
-    return await db.insert(records).values(row);
+    await db.insert(records).values(row);
   },
 
-  async updateRecord(request: CreateOrUpdateRecordRequest) {
+  async updateRecord(request: CreateOrUpdateRecordRequest): Promise<void> {
     if (!request.id) {
       throw new Error("Record ID is required for update");
     }
@@ -174,11 +174,11 @@ export const RecordService = {
       comment: request.comment?.trim() || null,
     };
 
-    return await db.update(records).set(row).where(eq(records.id, request.id));
+    await db.update(records).set(row).where(eq(records.id, request.id));
   },
 
-  async deleteRecord(id: number) {
-    return await db.delete(records).where(eq(records.id, id));
+  async deleteRecord(id: number): Promise<void> {
+    await db.delete(records).where(eq(records.id, id));
   },
 
   async searchRecordComments(comment: string): Promise<string[]> {
