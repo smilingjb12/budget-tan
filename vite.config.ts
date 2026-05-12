@@ -25,12 +25,15 @@ export default defineConfig({
     }),
     tanstackStart(),
     viteReact(),
-    nitro(),
+    nitro({
+      config: {
+        externals: {
+          external: ['pg', 'pg-native'],
+        },
+      },
+    }),
   ],
   define: {
     global: 'globalThis',
-  },
-  ssr: {
-    noExternal: process.env.NODE_ENV === 'production' ? true : undefined,
   },
 })
