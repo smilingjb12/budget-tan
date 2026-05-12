@@ -16,7 +16,7 @@ export const getMonthSummary = createServerFn({
   method: "GET",
 })
   .middleware([authMiddleware])
-  .validator(monthSummarySchema)
+  .inputValidator(monthSummarySchema)
   .handler(async ({ data: { year, month } }) => {
     return await RecordService.getMonthSummary(year, month);
   });
@@ -33,7 +33,7 @@ export const getRecordsByMonth = createServerFn({
   method: "GET",
 })
   .middleware([authMiddleware])
-  .validator(monthSummarySchema)
+  .inputValidator(monthSummarySchema)
   .handler(async ({ data: { year, month } }) => {
     return await RecordService.getRecordsByMonth(year, month);
   });
@@ -46,7 +46,7 @@ export const getRecordById = createServerFn({
   method: "GET",
 })
   .middleware([authMiddleware])
-  .validator(recordIdSchema)
+  .inputValidator(recordIdSchema)
   .handler(async ({ data: { id } }) => {
     return await RecordService.getRecordById(id);
   });
@@ -55,7 +55,7 @@ export const createRecord = createServerFn({
   method: "POST",
 })
   .middleware([authMiddleware])
-  .validator(createOrUpdateRecordSchema)
+  .inputValidator(createOrUpdateRecordSchema)
   .handler(async ({ data }) => {
     return await RecordService.createRecord(data);
   });
@@ -64,7 +64,7 @@ export const updateRecord = createServerFn({
   method: "POST",
 })
   .middleware([authMiddleware])
-  .validator(createOrUpdateRecordSchema)
+  .inputValidator(createOrUpdateRecordSchema)
   .handler(async ({ data }) => {
     return await RecordService.updateRecord(data);
   });
@@ -73,7 +73,7 @@ export const deleteRecord = createServerFn({
   method: "POST",
 })
   .middleware([authMiddleware])
-  .validator(recordIdSchema)
+  .inputValidator(recordIdSchema)
   .handler(async ({ data: { id } }) => {
     return await RecordService.deleteRecord(id);
   });
@@ -86,7 +86,7 @@ export const searchRecordComments = createServerFn({
   method: "GET",
 })
   .middleware([authMiddleware])
-  .validator(searchCommentSchema)
+  .inputValidator(searchCommentSchema)
   .handler(async ({ data: { comment } }) => {
     return await RecordService.searchRecordComments(comment);
   });

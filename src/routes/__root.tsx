@@ -4,7 +4,6 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ClerkProvider } from "@clerk/tanstack-react-start";
 import { dark } from "@clerk/themes";
-import type { Appearance } from "@clerk/types";
 import * as React from "react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
@@ -84,7 +83,7 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const clerkAppearance: Appearance = {
+  const clerkAppearance = {
     theme: dark,
     variables: {
       colorPrimary: "#2BB5A0",

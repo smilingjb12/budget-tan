@@ -24,7 +24,7 @@ export const getRegularPayments = createServerFn({ method: 'GET' })
 // Create a new regular payment
 export const createRegularPayment = createServerFn({ method: 'POST' })
   .middleware([authMiddleware])
-  .validator(regularPaymentSchema)
+  .inputValidator(regularPaymentSchema)
   .handler(async ({ data: payment }) => {
     return await RegularPaymentService.createRegularPayment(payment)
   })
@@ -32,7 +32,7 @@ export const createRegularPayment = createServerFn({ method: 'POST' })
 // Update a single regular payment
 export const updateRegularPayment = createServerFn({ method: 'POST' })
   .middleware([authMiddleware])
-  .validator(regularPaymentSchema)
+  .inputValidator(regularPaymentSchema)
   .handler(async ({ data: payment }) => {
     return await RegularPaymentService.updateRegularPayment(payment)
   })
@@ -40,7 +40,7 @@ export const updateRegularPayment = createServerFn({ method: 'POST' })
 // Delete a regular payment
 export const deleteRegularPayment = createServerFn({ method: 'POST' })
   .middleware([authMiddleware])
-  .validator(z.object({ id: z.number() }))
+  .inputValidator(z.object({ id: z.number() }))
   .handler(async ({ data }) => {
     return await RegularPaymentService.deleteRegularPayment(data.id)
   })
