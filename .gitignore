@@ -22,3 +22,6 @@ yarn.lock
 nul
 .claude/settings.json
 .env.local
+
+# clerk configuration (can include secrets)
+/.clerk/

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SignInButton, SignedIn, SignedOut, useAuth } from "@clerk/tanstack-react-start";
+import { SignInButton, useAuth } from "@clerk/tanstack-react-start";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { useEffect } from "react";
 
@@ -27,7 +27,7 @@ function SignInPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <SignedOut>
+      {!isSignedIn && (
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold">Budget App</CardTitle>
@@ -49,12 +49,12 @@ function SignInPage() {
             </SignInButton>
           </CardContent>
         </Card>
-      </SignedOut>
-      <SignedIn>
+      )}
+      {isSignedIn && (
         <div className="text-center">
           <p>You are already signed in. Redirecting...</p>
         </div>
-      </SignedIn>
+      )}
     </div>
   );
 }

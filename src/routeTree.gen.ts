@@ -8,22 +8,23 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createServerRootRoute } from '@tanstack/react-start/server'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as CustomScriptDotjsRouteImport } from './routes/customScript[.]js'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppSettingsRouteImport } from './routes/app/settings'
 import { Route as AppChartsRouteImport } from './routes/app/charts'
 import { Route as AppYearMonthRouteImport } from './routes/app/$year/$month'
-import { ServerRoute as CustomScriptDotjsServerRouteImport } from './routes/customScript[.]js'
-
-const rootServerRouteImport = createServerRootRoute()
 
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomScriptDotjsRoute = CustomScriptDotjsRouteImport.update({
+  id: '/customScript.js',
+  path: '/customScript.js',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -51,15 +52,11 @@ const AppYearMonthRoute = AppYearMonthRouteImport.update({
   path: '/$year/$month',
   getParentRoute: () => AppRoute,
 } as any)
-const CustomScriptDotjsServerRoute = CustomScriptDotjsServerRouteImport.update({
-  id: '/customScript.js',
-  path: '/customScript.js',
-  getParentRoute: () => rootServerRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/customScript.js': typeof CustomScriptDotjsRoute
   '/sign-in': typeof SignInRoute
   '/app/charts': typeof AppChartsRoute
   '/app/settings': typeof AppSettingsRoute
@@ -68,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/customScript.js': typeof CustomScriptDotjsRoute
   '/sign-in': typeof SignInRoute
   '/app/charts': typeof AppChartsRoute
   '/app/settings': typeof AppSettingsRoute
@@ -77,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/customScript.js': typeof CustomScriptDotjsRoute
   '/sign-in': typeof SignInRoute
   '/app/charts': typeof AppChartsRoute
   '/app/settings': typeof AppSettingsRoute
@@ -87,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/customScript.js'
     | '/sign-in'
     | '/app/charts'
     | '/app/settings'
@@ -95,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/app'
+    | '/customScript.js'
     | '/sign-in'
     | '/app/charts'
     | '/app/settings'
@@ -103,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/customScript.js'
     | '/sign-in'
     | '/app/charts'
     | '/app/settings'
@@ -112,28 +114,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  CustomScriptDotjsRoute: typeof CustomScriptDotjsRoute
   SignInRoute: typeof SignInRoute
-}
-export interface FileServerRoutesByFullPath {
-  '/customScript.js': typeof CustomScriptDotjsServerRoute
-}
-export interface FileServerRoutesByTo {
-  '/customScript.js': typeof CustomScriptDotjsServerRoute
-}
-export interface FileServerRoutesById {
-  __root__: typeof rootServerRouteImport
-  '/customScript.js': typeof CustomScriptDotjsServerRoute
-}
-export interface FileServerRouteTypes {
-  fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/customScript.js'
-  fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/customScript.js'
-  id: '__root__' | '/customScript.js'
-  fileServerRoutesById: FileServerRoutesById
-}
-export interface RootServerRouteChildren {
-  CustomScriptDotjsServerRoute: typeof CustomScriptDotjsServerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -143,6 +125,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customScript.js': {
+      id: '/customScript.js'
+      path: '/customScript.js'
+      fullPath: '/customScript.js'
+      preLoaderRoute: typeof CustomScriptDotjsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -182,17 +171,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-declare module '@tanstack/react-start/server' {
-  interface ServerFileRoutesByPath {
-    '/customScript.js': {
-      id: '/customScript.js'
-      path: '/customScript.js'
-      fullPath: '/customScript.js'
-      preLoaderRoute: typeof CustomScriptDotjsServerRouteImport
-      parentRoute: typeof rootServerRouteImport
-    }
-  }
-}
 
 interface AppRouteChildren {
   AppChartsRoute: typeof AppChartsRoute
@@ -211,14 +189,19 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  CustomScriptDotjsRoute: CustomScriptDotjsRoute,
   SignInRoute: SignInRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-const rootServerRouteChildren: RootServerRouteChildren = {
-  CustomScriptDotjsServerRoute: CustomScriptDotjsServerRoute,
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
 }
-export const serverRouteTree = rootServerRouteImport
-  ._addFileChildren(rootServerRouteChildren)
-  ._addFileTypes<FileServerRouteTypes>()
