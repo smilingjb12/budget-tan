@@ -58,3 +58,14 @@ export const regularPayments = pgTable("regularPayments", {
   lastModified: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
+export const balance = pgTable("balance", {
+  id: serial().primaryKey(),
+  currentBalance: decimal({
+    precision: 12,
+    scale: 2,
+  })
+    .notNull()
+    .default("0"),
+  updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+});
+

@@ -1,8 +1,7 @@
 import { MonthYearPicker } from "~/components/month-year-picker";
 import { Button } from "~/components/ui/button";
-import { useAllTimeSummaryQuery } from "~/lib/queries";
+import { useBalanceQuery } from "~/lib/queries";
 import { cn, formatEUR } from "~/lib/utils";
-import { AddRecordDialog } from "~/components/add-record-dialog";
 
 // Define view type for toggling between expenses and income
 export type ViewType = "expenses" | "income";
@@ -20,13 +19,9 @@ export function MonthlyHeader({
   month,
   year,
 }: MonthlyHeaderProps) {
-  const { data: allTimeSummary, isLoading: isLoadingAllTime } =
-    useAllTimeSummaryQuery();
+  const { data: balanceData, isLoading } = useBalanceQuery();
 
-  // Calculate balance (profit - expenses)
-  const balance = allTimeSummary
-    ? allTimeSummary.totalProfit - allTimeSummary.totalExpenses
-    : 0;
+  const balance = balanceData?.currentBalance ?? 0;
   const isPositiveBalance = balance >= 0;
 
   return (
@@ -48,19 +43,14 @@ export function MonthlyHeader({
         </Button>
       </div>
       <div className="flex-shrink-0">
-        {!isLoadingAllTime && allTimeSummary && (
-          <AddRecordDialog
-            isIncome={viewType === "income"}
-            trigger={
-              <div
-                className={`font-semibold text-xl ${
-                  isPositiveBalance ? "text-income" : "text-expense"
-                } cursor-pointer hover:underline`}
-              >
-                <span>{formatEUR(balance)}</span>
-              </div>
-            }
-          />
+        {!isLoading && balanceData && (
+          <div
+            className={`font-semibold text-xl ${
+              isPositiveBalance ? "text-income" : "text-expense"
+            }`}
+          >
+            <span>{formatEUR(balance)}</span>
+          </div>
         )}
       </div>
     </div>

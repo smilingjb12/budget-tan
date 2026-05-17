@@ -276,7 +276,7 @@ export function AddRecordDialog({
       });
 
       await queryClient.invalidateQueries({
-        queryKey: QueryKeys.allTimeSummary(),
+        queryKey: QueryKeys.balance(),
       });
 
       await queryClient.invalidateQueries({
@@ -327,7 +327,7 @@ export function AddRecordDialog({
           queryKey: QueryKeys.monthSummary(prevYear, prevMonth),
         });
         await queryClient.invalidateQueries({
-          queryKey: QueryKeys.allTimeSummary(),
+          queryKey: QueryKeys.balance(),
         });
         await queryClient.invalidateQueries({
           queryKey: QueryKeys.monthRecords(year, month),

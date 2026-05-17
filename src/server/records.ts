@@ -21,14 +21,6 @@ export const getMonthSummary = createServerFn({
     return await RecordService.getMonthSummary(year, month);
   });
 
-export const getAllTimeSummary = createServerFn({
-  method: "GET",
-})
-  .middleware([authMiddleware])
-  .handler(async () => {
-    return await RecordService.getAllTimeSummary();
-  });
-
 export const getRecordsByMonth = createServerFn({
   method: "GET",
 })

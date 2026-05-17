@@ -85,6 +85,13 @@
       "when": 1738368000000,
       "tag": "0012_usd_to_eur_conversion",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1779054547878,
+      "tag": "0013_bent_slipstream",
+      "breakpoints": true
     }
   ]
 }

@@ -2,6 +2,7 @@ import { categories, db, records } from "~/db";
 import { sql } from "drizzle-orm";
 import { desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
+import { BalanceService } from "~/services/balance-service";
 
 export type CategorySummaryDto = {
   categoryName: string;
@@ -12,11 +13,6 @@ export type CategorySummaryDto = {
 
 export type MonthSummaryDto = {
   categorySummaries: CategorySummaryDto[];
-};
-
-export type AllTimeSummaryDto = {
-  totalExpenses: number;
-  totalProfit: number;
 };
 
 export type MonthlyIncomeExpenseDto = {
@@ -72,27 +68,6 @@ export const RecordService = {
 
     return {
       categorySummaries,
-    };
-  },
-
-  async getAllTimeSummary(): Promise<AllTimeSummaryDto> {
-    const [{ totalExpenses = 0 } = {}] = await db
-      .select({
-        totalExpenses: sql<number>`SUM(${records.value})`,
-      })
-      .from(records)
-      .where(sql`${records.isExpense} = true`);
-
-    const [{ totalProfit = 0 } = {}] = await db
-      .select({
-        totalProfit: sql<number>`SUM(${records.value})`,
-      })
-      .from(records)
-      .where(sql`${records.isExpense} = false`);
-
-    return {
-      totalExpenses,
-      totalProfit,
     };
   },
 
@@ -160,25 +135,83 @@ export const RecordService = {
       comment: request.comment?.trim() || null,
       isExpense: request.isExpense,
     };
-    await db.insert(records).values(row);
+
+    await db.transaction(async (tx) => {
+      await tx.insert(records).values(row);
+      await BalanceService.adjust(
+        BalanceService.contributionFor({
+          value: request.value,
+          isExpense: request.isExpense,
+        }),
+        tx
+      );
+    });
   },
 
   async updateRecord(request: CreateOrUpdateRecordRequest): Promise<void> {
     if (!request.id) {
       throw new Error("Record ID is required for update");
     }
+    const recordId = request.id;
 
-    const row = {
-      categoryId: request.categoryId,
-      value: String(request.value),
-      comment: request.comment?.trim() || null,
-    };
+    await db.transaction(async (tx) => {
+      const existing = await tx
+        .select({
+          value: records.value,
+          isExpense: records.isExpense,
+        })
+        .from(records)
+        .where(eq(records.id, recordId))
+        .limit(1);
 
-    await db.update(records).set(row).where(eq(records.id, request.id));
+      if (existing.length === 0) {
+        throw new Error(`Record ${recordId} not found`);
+      }
+
+      const oldContribution = BalanceService.contributionFor({
+        value: parseFloat(existing[0].value),
+        isExpense: existing[0].isExpense,
+      });
+      const newContribution = BalanceService.contributionFor({
+        value: request.value,
+        isExpense: request.isExpense,
+      });
+
+      await tx
+        .update(records)
+        .set({
+          categoryId: request.categoryId,
+          value: String(request.value),
+          comment: request.comment?.trim() || null,
+          isExpense: request.isExpense,
+        })
+        .where(eq(records.id, recordId));
+
+      await BalanceService.adjust(newContribution - oldContribution, tx);
+    });
   },
 
   async deleteRecord(id: number): Promise<void> {
-    await db.delete(records).where(eq(records.id, id));
+    await db.transaction(async (tx) => {
+      const existing = await tx
+        .select({
+          value: records.value,
+          isExpense: records.isExpense,
+        })
+        .from(records)
+        .where(eq(records.id, id))
+        .limit(1);
+
+      if (existing.length === 0) return;
+
+      const contribution = BalanceService.contributionFor({
+        value: parseFloat(existing[0].value),
+        isExpense: existing[0].isExpense,
+      });
+
+      await tx.delete(records).where(eq(records.id, id));
+      await BalanceService.adjust(-contribution, tx);
+    });
   },
 
   async searchRecordComments(comment: string): Promise<string[]> {

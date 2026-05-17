@@ -36,7 +36,6 @@ export const ApiRoutes = {
   categories: () => `/api/categories`,
   expenseCategories: () => `/api/categories/expense`,
   incomeCategories: () => `/api/categories/income`,
-  allTimeSummary: () => `/api/records/summary`,
   expensesByCategory: (categoryId: number) =>
     `/api/charts/expenses-by-category/${categoryId}`,
   expensesVsIncome: () => `/api/charts/expenses-vs-income`,

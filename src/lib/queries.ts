@@ -14,7 +14,6 @@ import {
 } from "~/server/categories";
 import {
   getMonthSummary,
-  getAllTimeSummary,
   getRecordsByMonth,
   getRecordById,
   createRecord,
@@ -23,6 +22,7 @@ import {
   searchRecordComments,
   getExpensesVsIncome,
 } from "~/server/records";
+import { getBalance, setBalance } from "~/server/balance";
 import { getExchangeRate } from "~/server/exchange-rate";
 import {
   getRegularPayments,
@@ -141,19 +141,31 @@ export function useMonthRecordsQuery(
   });
 }
 
-// All time summary query
-export function useAllTimeSummaryQuery() {
+// Balance query (stored running balance)
+export function useBalanceQuery() {
   return useQuery({
-    queryKey: QueryKeys.allTimeSummary(),
+    queryKey: QueryKeys.balance(),
     queryFn: async () => {
       try {
-        const response = await getAllTimeSummary({});
-        console.log("All time summary response:", response);
-        return response || { totalExpenses: 0, totalProfit: 0 };
+        const response = await getBalance({});
+        return response || { currentBalance: 0 };
       } catch (error) {
-        console.error("All time summary query error:", error);
-        return { totalExpenses: 0, totalProfit: 0 };
+        console.error("Balance query error:", error);
+        return { currentBalance: 0 };
       }
+    },
+  });
+}
+
+export function useSetBalanceMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (value: number) => {
+      return await setBalance({ data: { value } });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.balance() });
     },
   });
 }
@@ -233,7 +245,7 @@ export function useCreateRecordMutation() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: QueryKeys.categories() });
-      queryClient.invalidateQueries({ queryKey: QueryKeys.allTimeSummary() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.balance() });
     },
   });
 }
@@ -256,7 +268,7 @@ export function useUpdateRecordMutation() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: QueryKeys.categories() });
-      queryClient.invalidateQueries({ queryKey: QueryKeys.allTimeSummary() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.balance() });
     },
   });
 }
@@ -279,7 +291,7 @@ export function useDeleteRecordMutation() {
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: QueryKeys.categories() });
-      queryClient.invalidateQueries({ queryKey: QueryKeys.allTimeSummary() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.balance() });
     },
   });
 }
