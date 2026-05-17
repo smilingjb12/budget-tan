@@ -42,7 +42,7 @@ export function MonthlyHeader({
           {viewType === "expenses" ? "E" : "I"}
         </Button>
       </div>
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 pr-4">
         {!isLoading && balanceData && (
           <div
             className={`font-semibold text-xl ${
