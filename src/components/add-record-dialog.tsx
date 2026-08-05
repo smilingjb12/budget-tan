@@ -50,11 +50,20 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+/** Values used to deep-link into an already filled in "Add" dialog. */
+export interface RecordPrefill {
+  amountEur?: number;
+  categoryName?: string;
+  comment?: string;
+}
+
 interface AddRecordDialogProps {
   recordId?: number;
   trigger?: React.ReactNode;
   onSuccess?: () => void;
   isIncome?: boolean;
+  prefill?: RecordPrefill | null;
+  onPrefillConsumed?: () => void;
 }
 
 export function AddRecordDialog({
@@ -62,6 +71,8 @@ export function AddRecordDialog({
   trigger,
   onSuccess,
   isIncome = false,
+  prefill,
+  onPrefillConsumed,
 }: AddRecordDialogProps) {
   const params = useParams({ from: '/app/$year/$month' });
   const month = Number(params.month) as Month;
@@ -97,12 +108,23 @@ export function AddRecordDialog({
     isEditMode && isDialogOpen
   );
 
+  const prefillCategoryName = prefill?.categoryName;
+
   const getDefaultCategoryId = useCallback(() => {
-    if (categories && categories.length > 0) {
-      return categories[0].id.toString();
+    if (!categories || categories.length === 0) {
+      return "";
     }
-    return "";
-  }, [categories]);
+    if (prefillCategoryName) {
+      const match = categories.find(
+        (category) =>
+          category.name.toLowerCase() === prefillCategoryName.toLowerCase()
+      );
+      if (match) {
+        return match.id.toString();
+      }
+    }
+    return categories[0].id.toString();
+  }, [categories, prefillCategoryName]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -214,6 +236,53 @@ export function AddRecordDialog({
     }
   }, [recordData]);
 
+  // Open the dialog with pre-filled values when navigated to with a prefill.
+  // The category is handled by getDefaultCategoryId above.
+  const prefillKey =
+    !isEditMode && prefill
+      ? `${prefill.amountEur ?? ""}|${prefill.categoryName ?? ""}|${
+          prefill.comment ?? ""
+        }`
+      : null;
+  const [appliedPrefillKey, setAppliedPrefillKey] = useState<string | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (!prefillKey) {
+      // Prefill was cleared - allow the same prefill to be applied again later
+      if (appliedPrefillKey !== null) {
+        setAppliedPrefillKey(null);
+      }
+      return;
+    }
+    if (prefillKey === appliedPrefillKey) return;
+    // Wait for the exchange rate so the PLN mirror can be filled in as well
+    if (isLoadingExchangeRate) return;
+
+    if (prefill?.amountEur !== undefined) {
+      const eur = prefill.amountEur.toFixed(2);
+      const pln = convertEurToPln(eur);
+      setEurValue(eur);
+      setPlnValue(pln);
+      form.setValue("value", pln || eur);
+    }
+    if (prefill?.comment) {
+      form.setValue("comment", prefill.comment);
+      setCommentInput(prefill.comment);
+    }
+
+    setAppliedPrefillKey(prefillKey);
+    setIsDialogOpen(true);
+  }, [
+    prefillKey,
+    appliedPrefillKey,
+    prefill,
+    isLoadingExchangeRate,
+    convertEurToPln,
+    form,
+  ]);
+
   const createRecordMutation = useCreateRecordMutation();
   const updateRecordMutation = useUpdateRecordMutation();
   const deleteRecordMutation = useDeleteRecordMutation();
@@ -300,6 +369,10 @@ export function AddRecordDialog({
       setPlnValue("");
       setEurValue("");
 
+      if (onPrefillConsumed) {
+        onPrefillConsumed();
+      }
+
       if (onSuccess) {
         onSuccess();
       }
@@ -357,6 +430,9 @@ export function AddRecordDialog({
             });
             setPlnValue("");
             setEurValue("");
+          }
+          if (!open && onPrefillConsumed) {
+            onPrefillConsumed();
           }
         }}
       >
@@ -563,6 +639,9 @@ export function AddRecordDialog({
           });
           setPlnValue("");
           setEurValue("");
+        }
+        if (!open && onPrefillConsumed) {
+          onPrefillConsumed();
         }
       }}
     >
