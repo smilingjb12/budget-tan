@@ -238,7 +238,7 @@ export function IncomeTrendsChart() {
     : 300;
 
   // Custom tooltip for the stacked bar chart
-  const CustomTooltip = (props: { active?: boolean; payload?: Array<{ name: string; value: number; color: string; payload: IncomeDataPoint }>; label?: string }) => {
+  const CustomTooltip = (props: { active?: boolean; payload?: Array<{ name: string; value: number; color: string; payload: IncomeDataPoint }>; label?: string | number }) => {
     const { active, payload, label } = props;
     if (active && payload && payload.length > 0) {
       const dataPoint = payload[0].payload;

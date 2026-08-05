@@ -311,7 +311,7 @@ export function ExpenseTrendsChart() {
                       <LabelList
                         dataKey="total"
                         position="top"
-                        formatter={(value: number) =>
+                        formatter={(value) =>
                           formatCurrency(Math.round(Number(value) || 0)).replace(/\.\d+/, "")
                         }
                         style={{

@@ -177,7 +177,7 @@ export function ExpenseByItemChart() {
       color: string;
       payload: ExpenseByItemDataPoint;
     }>;
-    label?: string;
+    label?: string | number;
   }) => {
     const { active, payload, label } = props;
     if (active && payload && payload.length > 0) {
