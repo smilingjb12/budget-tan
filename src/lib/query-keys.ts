@@ -3,7 +3,6 @@ export type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 export const QueryKeys = {
   categories: () => ["categories"] as const,
   expenseCategories: () => ["expense-categories"] as const,
-  incomeCategories: () => ["income-categories"] as const,
   monthSummary: (year: number, month: Month) => ["month-summary", year, month] as const,
   monthRecords: (year: number, month: Month) => ["month-records", year, month] as const,
   balance: () => ["balance"] as const,
@@ -12,7 +11,6 @@ export const QueryKeys = {
   regularPayments: () => ["regular-payments"] as const,
   exchangeRate: () => ["exchange-rate"] as const,
   expensesVsIncome: () => ["expenses-vs-income"] as const,
-  uniqueComments: () => ["unique-comments"] as const,
   uniqueCommentsGrouped: () => ["unique-comments-grouped"] as const,
   expensesByItems: (items: string[]) => ["expenses-by-items", items] as const,
 } as const;

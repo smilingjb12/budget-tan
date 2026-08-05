@@ -37,19 +37,4 @@ export const CategoryService = {
 
     return result;
   },
-
-  async getIncomeCategories(): Promise<CategoryDto[]> {
-    const result = await db
-      .select({
-        id: categories.id,
-        name: categories.name,
-        icon: categories.icon,
-        isExpense: categories.isExpense,
-      })
-      .from(categories)
-      .where(eq(categories.isExpense, false))
-      .orderBy(categories.order);
-
-    return result;
-  },
 };

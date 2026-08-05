@@ -29,13 +29,6 @@ export const getIncomeTrends = createServerFn({ method: 'GET' })
     return await ChartsService.getMonthlyIncomeByCategories()
   })
 
-// Get unique comment values for autocomplete (normalized)
-export const getUniqueComments = createServerFn({ method: 'GET' })
-  .middleware([authMiddleware])
-  .handler(async () => {
-    return await ChartsService.getUniqueComments()
-  })
-
 // Get unique comments grouped by their most common category
 export const getUniqueCommentsGrouped = createServerFn({ method: 'GET' })
   .middleware([authMiddleware])

@@ -13,9 +13,3 @@ export const getExpenseCategories = createServerFn({
 }).middleware([authMiddleware]).handler(async () => {
   return await CategoryService.getExpenseCategories()
 })
-
-export const getIncomeCategories = createServerFn({
-  method: 'GET',
-}).middleware([authMiddleware]).handler(async () => {
-  return await CategoryService.getIncomeCategories()
-})

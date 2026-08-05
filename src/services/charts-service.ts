@@ -150,32 +150,6 @@ export const ChartsService = {
     }));
   },
 
-  async getUniqueComments(): Promise<string[]> {
-    const result = await db
-      .selectDistinct({
-        comment: records.comment,
-      })
-      .from(records)
-      .where(
-        and(
-          isNotNull(records.comment),
-          ne(records.comment, ""),
-          eq(records.isExpense, true)
-        )
-      )
-      .orderBy(records.comment);
-
-    // Normalize and deduplicate
-    const normalizedSet = new Set<string>();
-    result.forEach((r) => {
-      if (r.comment) {
-        normalizedSet.add(normalizeItemName(r.comment));
-      }
-    });
-
-    return Array.from(normalizedSet).sort();
-  },
-
   async getUniqueCommentsGroupedByCategory(): Promise<GroupedCommentsDto[]> {
     // Fetch all expense records with comments, including category info
     const result = await db

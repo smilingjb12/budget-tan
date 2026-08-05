@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignInRouteImport } from './routes/sign-in'
-import { Route as CustomScriptDotjsRouteImport } from './routes/customScript[.]js'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppSettingsRouteImport } from './routes/app/settings'
@@ -20,11 +19,6 @@ import { Route as AppYearMonthRouteImport } from './routes/app/$year/$month'
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CustomScriptDotjsRoute = CustomScriptDotjsRouteImport.update({
-  id: '/customScript.js',
-  path: '/customScript.js',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -56,7 +50,6 @@ const AppYearMonthRoute = AppYearMonthRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
-  '/customScript.js': typeof CustomScriptDotjsRoute
   '/sign-in': typeof SignInRoute
   '/app/charts': typeof AppChartsRoute
   '/app/settings': typeof AppSettingsRoute
@@ -65,7 +58,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
-  '/customScript.js': typeof CustomScriptDotjsRoute
   '/sign-in': typeof SignInRoute
   '/app/charts': typeof AppChartsRoute
   '/app/settings': typeof AppSettingsRoute
@@ -75,7 +67,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
-  '/customScript.js': typeof CustomScriptDotjsRoute
   '/sign-in': typeof SignInRoute
   '/app/charts': typeof AppChartsRoute
   '/app/settings': typeof AppSettingsRoute
@@ -86,7 +77,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
-    | '/customScript.js'
     | '/sign-in'
     | '/app/charts'
     | '/app/settings'
@@ -95,7 +85,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/app'
-    | '/customScript.js'
     | '/sign-in'
     | '/app/charts'
     | '/app/settings'
@@ -104,7 +93,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
-    | '/customScript.js'
     | '/sign-in'
     | '/app/charts'
     | '/app/settings'
@@ -114,7 +102,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
-  CustomScriptDotjsRoute: typeof CustomScriptDotjsRoute
   SignInRoute: typeof SignInRoute
 }
 
@@ -125,13 +112,6 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof SignInRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/customScript.js': {
-      id: '/customScript.js'
-      path: '/customScript.js'
-      fullPath: '/customScript.js'
-      preLoaderRoute: typeof CustomScriptDotjsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -189,7 +169,6 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
-  CustomScriptDotjsRoute: CustomScriptDotjsRoute,
   SignInRoute: SignInRoute,
 }
 export const routeTree = rootRouteImport

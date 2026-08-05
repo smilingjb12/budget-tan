@@ -7,11 +7,7 @@ import {
 import { Month } from "~/lib/routes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "./query-keys";
-import {
-  getCategories,
-  getExpenseCategories,
-  getIncomeCategories,
-} from "~/server/categories";
+import { getCategories, getExpenseCategories } from "~/server/categories";
 import {
   getMonthSummary,
   getRecordsByMonth,
@@ -35,7 +31,6 @@ import {
   getCategoryExpenses,
   getMonthlyExpensesVsIncome,
   getIncomeTrends,
-  getUniqueComments,
   getUniqueCommentsGrouped,
   getExpensesByItems,
 } from "~/server/charts";
@@ -82,21 +77,6 @@ export function useExpenseCategoriesQuery() {
         return response || [];
       } catch (error) {
         console.error("Expense categories query error:", error);
-        return [];
-      }
-    },
-  });
-}
-
-export function useIncomeCategoriesQuery() {
-  return useQuery({
-    queryKey: QueryKeys.incomeCategories(),
-    queryFn: async () => {
-      try {
-        const response = await getIncomeCategories({});
-        return response || [];
-      } catch (error) {
-        console.error("Income categories query error:", error);
         return [];
       }
     },
@@ -478,27 +458,6 @@ export function useIncomeTrendsQuery() {
         );
       } catch (error) {
         console.error("Income trends query error:", error);
-        return [];
-      }
-    },
-  });
-}
-
-// Unique comments query (for expense by item chart autocomplete)
-export function useUniqueCommentsQuery() {
-  return useQuery<string[]>({
-    queryKey: QueryKeys.uniqueComments(),
-    queryFn: async () => {
-      try {
-        const response = await getUniqueComments({});
-        console.log("Unique comments response:", response);
-        return (
-          (response as unknown as { result: string[] })?.result ||
-          (response as string[]) ||
-          []
-        );
-      } catch (error) {
-        console.error("Unique comments query error:", error);
         return [];
       }
     },

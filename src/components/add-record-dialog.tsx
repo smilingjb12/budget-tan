@@ -82,7 +82,6 @@ export function AddRecordDialog({
   const {
     data: exchangeRateData,
     isLoading: isLoadingExchangeRate,
-    isError: isExchangeRateError,
   } = useExchangeRateQuery();
   const exchangeRate = exchangeRateData?.rate;
 
