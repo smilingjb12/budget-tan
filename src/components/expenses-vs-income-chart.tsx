@@ -164,7 +164,7 @@ export function ExpensesVsIncomeChart() {
       const year = dataPoint.year;
 
       return (
-        <div className="glass-strong p-2 rounded-lg text-xs">
+        <div className="rounded-md border border-border bg-popover p-2.5 text-xs shadow-xl shadow-black/30">
           <p className="font-medium">{`${label} ${year}`}</p>
           <p className="text-expense">{`Expenses: ${formatCurrency(
             expenseValue || 0
@@ -210,20 +210,20 @@ export function ExpensesVsIncomeChart() {
                   <CartesianGrid
                     strokeDasharray="3 3"
                     vertical={false}
-                    stroke="rgba(var(--muted-foreground), 0.1)"
-                    strokeOpacity={0.2}
+                    stroke="hsl(var(--border))"
                   />
-                  <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                  <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
                   <YAxis
                     tickLine={false}
                     axisLine={false}
+                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
                     tickFormatter={(value: number) => formatCurrency(value)}
                   />
                   <Tooltip
                     content={<CustomTooltip />}
-                    cursor={{ fill: "rgba(0, 0, 0, 0.2)" }}
+                    cursor={{ fill: "hsl(var(--muted) / 0.6)" }}
                   />
-                  <Legend />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
 
                   {/* Year dividers */}
                   {yearDividers && yearDividers.map((divider) => (
@@ -256,8 +256,8 @@ export function ExpensesVsIncomeChart() {
                         key={`cell-${index}`}
                         fill={
                           entry.difference >= 0
-                            ? "hsl(152, 60%, 52%)"
-                            : "hsl(16, 80%, 60%)"
+                            ? "hsl(var(--income))"
+                            : "hsl(var(--expense))"
                         }
                       />
                     ))}

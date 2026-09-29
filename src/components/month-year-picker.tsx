@@ -7,7 +7,7 @@ import {
 import { Month, Routes } from "~/lib/routes";
 import { cn, formatCurrency } from "~/lib/utils";
 import { format } from "date-fns";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useExpensesVsIncomeQuery } from "~/lib/queries";
@@ -69,13 +69,13 @@ export function MonthYearPicker({
   // Helper function to get profit (income - expenses) for a specific month
   const getProfitForMonth = (year: number, monthIndex: number) => {
     if (!expensesVsIncomeData?.monthlyData) return 0;
-    
+
     const monthData = expensesVsIncomeData.monthlyData.find(
       (data) => Number(data.year) === year && Number(data.month) === monthIndex + 1 // Convert to 1-indexed month
     );
-    
+
     if (!monthData) return 0;
-    
+
     return (Number(monthData.totalIncome) || 0) - (Number(monthData.totalExpenses) || 0);
   };
 
@@ -108,24 +108,33 @@ export function MonthYearPicker({
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          className={cn("font-bold text-xl justify-start text-left", className)}
+          className={cn(
+            "-ml-2 h-auto gap-1.5 px-2 py-1 text-2xl font-semibold tracking-tight",
+            className
+          )}
         >
           {formatSelectedDate()}
+          <ChevronDown
+            className={cn(
+              "h-5 w-5 text-muted-foreground transition-transform duration-150",
+              open && "rotate-180"
+            )}
+          />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[320px] p-3" align="start">
-        <div className="flex items-center justify-between mb-2">
-          <Button variant="outline" size="icon" onClick={handlePreviousYear}>
+        <div className="mb-3 flex items-center justify-between">
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handlePreviousYear}>
             <ChevronLeft className="h-4 w-4" />
             <span className="sr-only">Previous year</span>
           </Button>
-          <div className="font-medium">{viewDate.getFullYear()}</div>
-          <Button variant="outline" size="icon" onClick={handleNextYear}>
+          <div className="figures text-sm font-semibold">{viewDate.getFullYear()}</div>
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleNextYear}>
             <ChevronRight className="h-4 w-4" />
             <span className="sr-only">Next year</span>
           </Button>
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-1.5">
           {months.map((monthName, index) => {
             const isSelected =
               selectedDate &&
@@ -143,24 +152,29 @@ export function MonthYearPicker({
                 key={monthName}
                 variant={isSelected ? "default" : "outline"}
                 className={cn(
-                  "h-16 py-2 flex flex-col justify-center",
-                  isCurrentMonth &&
-                    !isSelected &&
-                    "border-2 border-primary font-bold"
+                  "h-14 flex-col justify-center gap-0.5 py-1",
+                  isCurrentMonth && !isSelected && "border-primary/60"
                 )}
                 onClick={() => handleSelectMonth(index)}
               >
-                <div className="relative w-full">
-                  <span className="text-sm font-medium">{monthName}</span>
-                  {isCurrentMonth && (
-                    <span className="absolute -top-1 -right-1 text-xs text-primary">
-                      •
-                    </span>
+                <span className="text-sm font-semibold leading-none">
+                  {monthName}
+                  {isCurrentMonth && !isSelected && (
+                    <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-primary align-middle" />
                   )}
-                </div>
-                <span className={`text-xs mt-1 font-medium ${
-                  profit > 0 ? "text-income" : profit < 0 ? "text-expense" : "text-muted-foreground"
-                }`}>
+                </span>
+                <span
+                  className={cn(
+                    "figures text-[11px] leading-none",
+                    isSelected
+                      ? "text-primary-foreground/80"
+                      : profit > 0
+                      ? "text-income"
+                      : profit < 0
+                      ? "text-expense"
+                      : "text-muted-foreground"
+                  )}
+                >
                   {profit !== 0 ? formatCurrency(Math.round(Math.abs(profit))) : "–"}
                 </span>
               </Button>

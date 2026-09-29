@@ -14,6 +14,10 @@ const ToggleGroupContext = React.createContext<
   variant: "default",
 })
 
+/**
+ * Segmented control: a muted track with the active item raised on a card
+ * surface. The outline variant draws the track border.
+ */
 function ToggleGroup({
   className,
   variant,
@@ -28,7 +32,7 @@ function ToggleGroup({
       data-variant={variant}
       data-size={size}
       className={cn(
-        "group/toggle-group flex w-fit items-center rounded-md data-[variant=outline]:glass-inner",
+        "group/toggle-group flex w-fit items-center gap-0.5 rounded-md bg-muted/60 p-0.5 data-[variant=outline]:border data-[variant=outline]:border-border",
         className
       )}
       {...props}
@@ -60,7 +64,7 @@ function ToggleGroupItem({
           variant: context.variant || variant,
           size: context.size || size,
         }),
-        "min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l",
+        "min-w-0 flex-1 shrink-0 rounded-sm border-0 hover:bg-transparent data-[state=on]:bg-card data-[state=on]:text-foreground data-[state=on]:shadow-sm focus:z-10 focus-visible:z-10",
         className
       )}
       {...props}

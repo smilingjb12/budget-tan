@@ -52,7 +52,7 @@ export function SegmentedProgress({
     return (
       <div
         className={cn(
-          "relative w-full overflow-hidden rounded-full bg-[hsl(var(--glass-bg)/0.40)] backdrop-blur-sm border border-[hsl(var(--glass-border)/0.10)]",
+          "relative w-full overflow-hidden rounded-md border border-border bg-muted",
           className
         )}
         style={{ height: `${height}px` }}
@@ -63,12 +63,12 @@ export function SegmentedProgress({
   return (
     <div
       className={cn(
-        "relative w-full overflow-hidden rounded-full bg-[hsl(var(--glass-bg)/0.40)] backdrop-blur-sm border border-[hsl(var(--glass-border)/0.10)]",
+        "relative w-full overflow-hidden rounded-md border border-border bg-muted",
         className
       )}
       style={{ height: `${height}px` }}
     >
-      <div className="flex h-full w-full">
+      <div className="flex h-full w-full gap-px">
         {validSegments.map((segment, index) => {
           const width = (segment.value / totalValue) * 100;
           const color =
@@ -80,7 +80,7 @@ export function SegmentedProgress({
                 <TooltipTrigger asChild>
                   <div
                     className={cn(
-                      "h-full flex items-center justify-center transition-all",
+                      "flex h-full items-center justify-center transition-[width] duration-300",
                       color
                     )}
                     style={{
@@ -89,7 +89,7 @@ export function SegmentedProgress({
                     }}
                   >
                     {segment.icon && width >= 5 && (
-                      <div className="text-white">{segment.icon}</div>
+                      <div className="text-white/90">{segment.icon}</div>
                     )}
                   </div>
                 </TooltipTrigger>

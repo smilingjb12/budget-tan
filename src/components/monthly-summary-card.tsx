@@ -149,9 +149,9 @@ export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
     return {
       text: `€${absValue.toFixed(2)}`,
       icon: isMore ? (
-        <ArrowUp className="h-4 w-4" />
+        <ArrowUp className="h-3.5 w-3.5" />
       ) : (
-        <ArrowDown className="h-4 w-4" />
+        <ArrowDown className="h-3.5 w-3.5" />
       ),
       color: isMore ? "text-expense" : "text-income",
     };
@@ -164,28 +164,31 @@ export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <CardHeader className="flex flex-row items-center justify-between px-3 pt-3 pb-2">
         <Button
           variant="ghost"
           size="icon"
+          className="rounded-full text-muted-foreground"
           onClick={handlePreviousMonth}
           aria-label="Previous month"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-5 w-5" />
         </Button>
-        <CardTitle className="flex items-center justify-center flex-col">
-          {formatEUR(totalMonthlyAmount)}
+        <CardTitle className="flex flex-col items-center justify-center gap-1.5">
+          <span className="figures text-3xl font-semibold tracking-tight">
+            {formatEUR(totalMonthlyAmount)}
+          </span>
           {monthDiff ? (
             <span
-              className={`ml-2 text-sm items-center inline-flex ${monthDiff.color}`}
+              className={`figures inline-flex items-center gap-0.5 text-xs ${monthDiff.color}`}
             >
               {monthDiff.text}
               {monthDiff.icon}
             </span>
           ) : (
-            <span className="ml-2 text-sm items-center inline-flex invisible">
+            <span className="figures invisible inline-flex items-center gap-0.5 text-xs">
               €0.00
-              <ArrowDown className="h-4 w-4" />
+              <ArrowDown className="h-3.5 w-3.5" />
             </span>
           )}
         </CardTitle>
@@ -193,21 +196,22 @@ export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
           <Button
             variant="ghost"
             size="icon"
+            className="rounded-full text-muted-foreground"
             onClick={handleNextMonth}
             aria-label="Next month"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-5 w-5" />
           </Button>
         ) : (
-          <div className="w-9 h-9"></div> // Empty div to maintain layout
+          <div className="w-10 h-10"></div> // Empty div to maintain layout
         )}
       </CardHeader>
-      <CardContent className="p-3">
+      <CardContent className="px-3 pb-3">
         {isLoading ? (
-          <div className="py-8">
-            <LoadingIndicator className="h-24" />
-            <p className="text-center text-muted-foreground mt-4">
-              Loading {viewType} data for {monthName} {yearString}...
+          <div className="py-10">
+            <LoadingIndicator className="h-12" />
+            <p className="mt-3 text-center text-sm text-muted-foreground">
+              Loading {viewType} for {monthName} {yearString}…
             </p>
           </div>
         ) : (
@@ -220,11 +224,11 @@ export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
             )}
 
             {filteredCategories.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
-                No {viewType} data available for {monthName} {yearString}.
+              <p className="py-10 text-center text-sm text-muted-foreground">
+                No {viewType} logged for {monthName} {yearString}.
               </p>
             ) : (
-              <div className="space-y-2 mt-4">
+              <div className="mt-3 flex flex-col gap-0.5">
                 {sortedCategories.map((category) => {
                   const diff = formatDifference(
                     category.difference,

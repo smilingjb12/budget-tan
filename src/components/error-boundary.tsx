@@ -36,19 +36,19 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       return (
         <Card className="m-4">
           <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-destructive">
+            <CardTitle className="flex items-center gap-2 text-expense">
               <AlertTriangle className="h-5 w-5" />
               Something went wrong
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-muted-foreground">
-              An unexpected error occurred. Please try refreshing the page.
+            <p className="text-sm text-muted-foreground">
+              Something broke while showing this page. Refresh to try again.
             </p>
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mt-4">
                 <summary className="cursor-pointer text-sm font-medium">Error Details</summary>
-                <pre className="mt-2 text-xs bg-muted p-4 rounded overflow-auto">
+                <pre className="figures mt-2 overflow-auto rounded-md border border-border bg-muted p-4 text-xs">
                   {this.state.error.stack}
                 </pre>
               </details>

@@ -17,16 +17,16 @@ import {
 
 // Generate a color palette for the categories
 const COLORS = [
-  "hsl(172, 66%, 50%)",  // Teal (primary)
-  "hsl(152, 60%, 52%)",  // Emerald green
-  "hsl(22, 90%, 62%)",   // Warm coral
-  "hsl(200, 70%, 55%)",  // Ocean blue
-  "hsl(280, 50%, 60%)",  // Soft violet
-  "hsl(45, 85%, 55%)",   // Golden
-  "hsl(330, 55%, 58%)",  // Rose
-  "hsl(100, 50%, 50%)",  // Lime green
-  "hsl(250, 55%, 62%)",  // Lavender
-  "hsl(10, 75%, 55%)",   // Terracotta
+  "hsl(38, 92%, 58%)",   // Saffron (primary)
+  "hsl(160, 55%, 50%)",  // Mint
+  "hsl(8, 78%, 62%)",    // Coral
+  "hsl(205, 75%, 60%)",  // Sky
+  "hsl(265, 55%, 68%)",  // Lilac
+  "hsl(48, 85%, 55%)",   // Gold
+  "hsl(335, 60%, 62%)",  // Rose
+  "hsl(95, 50%, 52%)",   // Lime
+  "hsl(235, 60%, 68%)",  // Periwinkle
+  "hsl(18, 70%, 55%)",   // Terracotta
 ];
 
 interface IncomeDataPoint {
@@ -244,7 +244,7 @@ export function IncomeTrendsChart() {
       const dataPoint = payload[0].payload;
       
       return (
-        <div className="glass-strong p-2 rounded-lg text-xs">
+        <div className="rounded-md border border-border bg-popover p-2.5 text-xs shadow-xl shadow-black/30">
           <p className="font-medium">{`${label} ${dataPoint.year}`}</p>
           <p className="font-semibold text-primary mb-1">{`Total: ${formatCurrency(dataPoint.total)}`}</p>
           <div className="space-y-1">
@@ -288,20 +288,20 @@ export function IncomeTrendsChart() {
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
-                  stroke="rgba(var(--muted-foreground), 0.1)"
-                  strokeOpacity={0.2}
+                  stroke="hsl(var(--border))"
                 />
-                <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
                 <YAxis
                   tickLine={false}
                   axisLine={false}
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
                   tickFormatter={(value: number) => formatCurrency(value)}
                 />
                 <Tooltip
                   content={<CustomTooltip />}
-                  cursor={{ fill: "rgba(0, 0, 0, 0.2)" }}
+                  cursor={{ fill: "hsl(var(--muted) / 0.6)" }}
                 />
-                <Legend />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
 
                 {/* Create a stacked bar for each category */}
                 {incomeTrendsData.categories.map((category, index) => (

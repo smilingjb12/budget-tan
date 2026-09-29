@@ -82,7 +82,7 @@ export function RegularPaymentItem({
 
   if (isEditing) {
     return (
-      <div className="rounded-lg glass-inner p-4 space-y-3">
+      <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
         <Input
           placeholder="Name"
           value={displayPayment.name}
@@ -90,7 +90,7 @@ export function RegularPaymentItem({
           className="w-full"
         />
         <div className="relative">
-          <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted-foreground">
             €
           </span>
           <Input
@@ -124,10 +124,10 @@ export function RegularPaymentItem({
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
       <CollapsibleTrigger asChild>
-        <button className="w-full text-left rounded-lg glass-inner p-3 hover:bg-[hsl(var(--glass-bg)/0.45)] transition-all duration-200">
+        <button className="w-full rounded-lg border border-border/70 bg-card px-3 py-2.5 text-left transition-colors duration-150 hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <div className="flex items-center gap-3">
             <div
-              className="w-1 h-8 rounded-full flex-shrink-0"
+              className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
               style={{
                 backgroundColor: getTextColor(payment.amount, payments),
               }}
@@ -137,9 +137,11 @@ export function RegularPaymentItem({
             </div>
             <div className="flex flex-col items-end">
               {isStale && (
-                <span className="text-xs font-medium text-expense">old</span>
+                <span className="rounded-sm bg-expense-muted px-1.5 text-[10px] font-semibold uppercase tracking-wide text-expense">
+                  old
+                </span>
               )}
-              <span className="font-semibold">
+              <span className="figures font-medium">
                 €{payment.amount.toFixed(2)}
               </span>
             </div>
@@ -147,7 +149,7 @@ export function RegularPaymentItem({
         </button>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <div className="flex gap-2 mt-2 px-1">
+        <div className="mt-2 flex gap-2 px-1">
           <Button
             variant="outline"
             size="sm"
@@ -165,7 +167,7 @@ export function RegularPaymentItem({
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-1 text-destructive hover:text-destructive"
+                className="flex-1 text-expense hover:text-expense"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Trash2 className="h-4 w-4 mr-2" />

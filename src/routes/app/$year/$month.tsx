@@ -72,7 +72,7 @@ function MonthlyBudgetPage() {
 
         <MonthlySummaryCard viewType={viewType} />
 
-        <div className="fixed bottom-20 right-10 z-50">
+        <div className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] right-5 z-50">
           <AddRecordDialog
             isIncome={viewType === "income"}
             prefill={prefill}

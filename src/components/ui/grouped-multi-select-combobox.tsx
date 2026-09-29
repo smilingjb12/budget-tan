@@ -172,7 +172,7 @@ export function GroupedMultiSelectCombobox({
                 <CommandGroup key={group.categoryId} className="p-0">
                   {/* Category header */}
                   <div
-                    className="flex items-center px-2 py-2 cursor-pointer hover:bg-accent border-b border-border/50"
+                    className="flex items-center px-2 py-2 cursor-pointer hover:bg-muted border-b border-border/60"
                     onClick={(e) => toggleCategory(group.categoryId, e)}
                   >
                     <div className="flex items-center gap-2">

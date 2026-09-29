@@ -115,7 +115,7 @@ export const ComboboxInput = React.forwardRef<
         </FormControl>
 
         {showSuggestions && (
-          <div className="absolute z-50 w-full mt-1 bg-popover rounded-md border shadow-md">
+          <div className="absolute z-50 mt-1 w-full rounded-md border border-border bg-popover shadow-xl shadow-black/30">
             <Command>
               <CommandList>
                 <CommandGroup>

@@ -59,7 +59,7 @@ export function RegularPaymentsList() {
   }
 
   if (error) {
-    return <div>Error loading regular payments</div>;
+    return <div className="px-5 pb-5 text-sm text-expense">Regular payments could not be loaded.</div>;
   }
 
   return (
@@ -75,7 +75,7 @@ export function RegularPaymentsList() {
         </div>
       </CardContent>
 
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex items-center justify-between">
         <div className="flex space-x-2">
           <Dialog
             open={isAddingNew}
@@ -123,8 +123,9 @@ export function RegularPaymentsList() {
             </DialogContent>
           </Dialog>
         </div>
-        <div className="font-semibold text-right">
-          Total: €{totalAmount.toFixed(2)}
+        <div className="text-right">
+          <div className="eyebrow">Total</div>
+          <div className="figures font-semibold">€{totalAmount.toFixed(2)}</div>
         </div>
       </CardFooter>
     </>

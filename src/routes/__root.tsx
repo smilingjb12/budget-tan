@@ -47,7 +47,7 @@ export const Route = createRootRoute({
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500;600&display=swap",
       },
       { rel: "stylesheet", href: appCss },
       {
@@ -86,10 +86,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const clerkAppearance = {
     theme: dark,
     variables: {
-      colorPrimary: "#2BB5A0",
-      colorBackground: "#0f1614",
-      colorInputBackground: "#172220",
-      colorInputText: "#f8fafc",
+      colorPrimary: "#F6AE31",
+      colorTextOnPrimaryBackground: "#1A1206",
+      colorBackground: "#16181D",
+      colorInputBackground: "#1B1E24",
+      colorInputText: "#EEECE7",
+      colorText: "#EEECE7",
+      borderRadius: "0.75rem",
+      fontFamily: '"Bricolage Grotesque", system-ui, sans-serif',
     },
   };
 

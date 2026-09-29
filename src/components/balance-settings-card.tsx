@@ -53,11 +53,11 @@ export function BalanceSettingsCard() {
           <LoadingIndicator className="pb-4" />
         ) : (
           <div className="space-y-4">
-            <div className="text-sm text-muted-foreground">
-              Current balance:{" "}
-              <span className="font-semibold text-foreground">
+            <div>
+              <div className="eyebrow">Current balance</div>
+              <div className="figures text-2xl font-semibold tracking-tight">
                 {formatEUR(balance.currentBalance)}
-              </span>
+              </div>
             </div>
 
             <div className="space-y-2">

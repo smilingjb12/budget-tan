@@ -260,13 +260,13 @@ export function ExpenseTrendsChart() {
                     <CartesianGrid
                       strokeDasharray="3 3"
                       vertical={false}
-                      stroke="rgba(var(--muted-foreground), 0.1)"
-                      strokeOpacity={0.2}
+                      stroke="hsl(var(--border))"
                     />
-                    <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
                     <YAxis
                       tickLine={false}
                       axisLine={false}
+                      tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
                       tickFormatter={(value: number) => formatCurrency(value)}
                       domain={
                         visibleData && visibleData.length > 0
@@ -316,7 +316,7 @@ export function ExpenseTrendsChart() {
                         }
                         style={{
                           fontSize: "12px",
-                          fill: "white",
+                          fill: "hsl(var(--foreground))",
                           fontWeight: "normal",
                         }}
                         className="text-foreground"

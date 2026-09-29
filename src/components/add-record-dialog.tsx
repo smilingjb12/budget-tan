@@ -466,13 +466,13 @@ export function AddRecordDialog({
                   aria-label="Delete record"
                   title="Delete record"
                 >
-                  <Trash2 className="h-4 w-4 text-destructive" />
+                  <Trash2 className="h-4 w-4 text-expense" />
                 </Button>
               )}
             </div>
           </DialogHeader>
           {isEditMode && isLoadingRecord ? (
-            <div className="py-4 text-center">Loading record data...</div>
+            <div className="py-4 text-center text-sm text-muted-foreground">Loading record…</div>
           ) : (
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -488,7 +488,7 @@ export function AddRecordDialog({
                         className="pr-10"
                         disabled={!exchangeRate || isLoadingExchangeRate}
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-lg font-medium">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-sm font-semibold">
                         zł
                       </span>
                     </div>
@@ -503,7 +503,7 @@ export function AddRecordDialog({
                         onChange={(e) => handleEurChange(e.target.value)}
                         className="pr-10"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-lg font-medium">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-sm font-semibold">
                         €
                       </span>
                     </div>
@@ -574,7 +574,7 @@ export function AddRecordDialog({
                           {selectedCategory ? `(${selectedCategory.name})` : ""}
                         </FormLabel>
                         <FormControl>
-                          <div className="grid grid-cols-3 gap-1 mt-2 mx-auto w-fit">
+                          <div className="mx-auto mt-2 grid w-fit grid-cols-3 gap-1.5">
                             {categories?.map((category) => {
                               const IconComponent = getCategoryIcon(
                                 category.icon
@@ -589,15 +589,15 @@ export function AddRecordDialog({
                                   onClick={() =>
                                     field.onChange(category.id.toString())
                                   }
-                                  className={`flex items-center justify-center aspect-square h-20 w-20 border border-input rounded-md transition-colors ${
+                                  className={`flex aspect-square h-20 w-20 items-center justify-center rounded-lg border transition-colors duration-150 ${
                                     isSelected
-                                      ? "bg-primary text-primary-foreground"
-                                      : "bg-background hover:bg-accent hover:text-accent-foreground"
+                                      ? "border-primary bg-primary text-primary-foreground"
+                                      : "border-border bg-muted/40 text-foreground hover:bg-muted"
                                   }`}
                                   title={category.name}
                                   disabled={isSelected} // Disable button if already selected to prevent untoggling
                                 >
-                                  <IconComponent className="h-8 w-8" />
+                                  <IconComponent className="h-7 w-7" />
                                 </button>
                               );
                             })}
@@ -614,7 +614,7 @@ export function AddRecordDialog({
           {/* Exchange rate last updated info */}
           {exchangeRateData?.lastUpdatedAt && (
             <div className="mt-2 text-xs text-muted-foreground">
-              Updated{" "}
+              Rate updated{" "}
               {formatDistanceToNow(parseISO(exchangeRateData.lastUpdatedAt), {
                 addSuffix: true,
               })}
@@ -648,7 +648,7 @@ export function AddRecordDialog({
       <DialogTrigger asChild>
         <Button
           size="icon"
-          className="h-14 w-14 rounded-full fab-glow transition-all duration-300 bg-primary text-primary-foreground hover:bg-primary/85 hover:scale-105 active:scale-95"
+          className="h-14 w-14 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-transform duration-150 hover:bg-primary/90 hover:scale-105 active:scale-95"
           aria-label={
             isEditMode
               ? "Edit record"
@@ -692,13 +692,13 @@ export function AddRecordDialog({
                 aria-label="Delete record"
                 title="Delete record"
               >
-                <Trash2 className="h-4 w-4 text-destructive" />
+                <Trash2 className="h-4 w-4 text-expense" />
               </Button>
             )}
           </div>
         </DialogHeader>
         {isEditMode && isLoadingRecord ? (
-          <div className="py-4 text-center">Loading record data...</div>
+          <div className="py-4 text-center text-sm text-muted-foreground">Loading record…</div>
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -714,7 +714,7 @@ export function AddRecordDialog({
                       className="pr-10"
                       disabled={!exchangeRate || isLoadingExchangeRate}
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-lg font-medium">
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-sm font-semibold">
                       zł
                     </span>
                   </div>
@@ -729,7 +729,7 @@ export function AddRecordDialog({
                       onChange={(e) => handleEurChange(e.target.value)}
                       className="pr-10"
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-lg font-medium">
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none select-none text-sm font-semibold">
                       €
                     </span>
                   </div>
@@ -800,7 +800,7 @@ export function AddRecordDialog({
                         {selectedCategory ? `(${selectedCategory.name})` : ""}
                       </FormLabel>
                       <FormControl>
-                        <div className="grid grid-cols-3 gap-1 mt-2 mx-auto w-fit">
+                        <div className="mx-auto mt-2 grid w-fit grid-cols-3 gap-1.5">
                           {categories?.map((category) => {
                             const IconComponent = getCategoryIcon(
                               category.icon
@@ -815,15 +815,15 @@ export function AddRecordDialog({
                                 onClick={() =>
                                   field.onChange(category.id.toString())
                                 }
-                                className={`flex items-center justify-center aspect-square h-20 w-20 rounded-lg transition-all duration-200 ${
+                                className={`flex aspect-square h-20 w-20 items-center justify-center rounded-lg border transition-colors duration-150 ${
                                   isSelected
-                                    ? "bg-primary text-primary-foreground shadow-md"
-                                    : "glass-inner hover:bg-[hsl(var(--glass-bg)/0.50)]"
+                                    ? "border-primary bg-primary text-primary-foreground"
+                                    : "border-border bg-muted/40 text-foreground hover:bg-muted"
                                 }`}
                                 title={category.name}
                                 disabled={isSelected} // Disable button if already selected to prevent untoggling
                               >
-                                <IconComponent className="h-8 w-8" />
+                                <IconComponent className="h-7 w-7" />
                               </button>
                             );
                           })}
@@ -840,7 +840,7 @@ export function AddRecordDialog({
         {/* Exchange rate last updated info */}
         {exchangeRateData?.lastUpdatedAt && (
           <div className="mt-2 text-xs text-muted-foreground">
-            Updated{" "}
+            Rate updated{" "}
             {formatDistanceToNow(parseISO(exchangeRateData.lastUpdatedAt), {
               addSuffix: true,
             })}

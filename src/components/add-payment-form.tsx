@@ -67,7 +67,7 @@ export function AddPaymentForm({
           className="w-full"
         />
         <div className="relative">
-          <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted-foreground">
             €
           </span>
           <Input

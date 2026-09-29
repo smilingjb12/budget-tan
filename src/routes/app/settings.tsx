@@ -13,7 +13,7 @@ function SettingsPage() {
     <div className="space-y-4">
       <BalanceSettingsCard />
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 gap-3">
           <CardTitle>Regular Payments</CardTitle>
           <LogRegularPaymentsButton />
         </CardHeader>

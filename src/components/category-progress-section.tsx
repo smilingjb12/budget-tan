@@ -22,9 +22,9 @@ export function CategoryProgressSection({
   const { getCategoryColor } = useCategoryColors();
 
   return (
-    <div className="mb-6">
+    <div className="mb-3 px-1">
       <SegmentedProgress
-        height={24}
+        height={22}
         segments={sortedCategories.map((category) => {
           const IconComponent = getCategoryIcon(category.icon);
           return {

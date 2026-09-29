@@ -13,7 +13,7 @@ export default function LoadingIndicator({
         className
       )}
     >
-      <Loader2 className={`animate-spin text-primary`} size={48} />
+      <Loader2 className="animate-spin text-primary" size={28} />
     </div>
   );
 }

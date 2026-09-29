@@ -1,5 +1,4 @@
 import { MonthYearPicker } from "~/components/month-year-picker";
-import { Button } from "~/components/ui/button";
 import { useBalanceQuery } from "~/lib/queries";
 import { cn, formatEUR } from "~/lib/utils";
 
@@ -25,34 +24,75 @@ export function MonthlyHeader({
   const isPositiveBalance = balance >= 0;
 
   return (
-    <div className="flex justify-between items-center">
-      <div className="flex items-center gap-2">
+    <header className="flex items-end justify-between gap-3 px-1">
+      <div className="min-w-0">
         <MonthYearPicker initialMonth={month} initialYear={year} />
-        <Button
-          variant="outline"
-          size="sm"
-          className={cn(
-            "w-[40px] transition-all duration-200",
-            viewType === "expenses"
-              ? "border-expense/40 text-expense hover:bg-expense-muted"
-              : "border-income/40 text-income hover:bg-income-muted"
-          )}
-          onClick={onToggleViewType}
-        >
-          {viewType === "expenses" ? "E" : "I"}
-        </Button>
+        <ViewTypeToggle viewType={viewType} onToggle={onToggleViewType} />
       </div>
-      <div className="flex-shrink-0 pr-4">
+      <div className="shrink-0 text-right">
         {!isLoading && balanceData && (
-          <div
-            className={`font-semibold text-xl ${
-              isPositiveBalance ? "text-income" : "text-expense"
-            }`}
-          >
-            <span>{formatEUR(balance)}</span>
-          </div>
+          <>
+            <div className="eyebrow">Balance</div>
+            <div
+              className={cn(
+                "figures text-lg font-semibold leading-tight",
+                isPositiveBalance ? "text-income" : "text-expense"
+              )}
+            >
+              {formatEUR(balance)}
+            </div>
+          </>
         )}
       </div>
+    </header>
+  );
+}
+
+/**
+ * Two-segment switch between the expense and income views. Either segment
+ * flips the view, so it behaves like the single toggle it replaces.
+ */
+function ViewTypeToggle({
+  viewType,
+  onToggle,
+}: {
+  viewType: ViewType;
+  onToggle: () => void;
+}) {
+  const isExpenses = viewType === "expenses";
+
+  return (
+    <div
+      role="group"
+      aria-label="Expenses or income"
+      className="mt-2 inline-flex rounded-md border border-border bg-muted/60 p-0.5 text-xs font-semibold"
+    >
+      <button
+        type="button"
+        aria-pressed={isExpenses}
+        onClick={() => !isExpenses && onToggle()}
+        className={cn(
+          "rounded-sm px-2.5 py-1 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          isExpenses
+            ? "bg-card text-expense shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Expenses
+      </button>
+      <button
+        type="button"
+        aria-pressed={!isExpenses}
+        onClick={() => isExpenses && onToggle()}
+        className={cn(
+          "rounded-sm px-2.5 py-1 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          !isExpenses
+            ? "bg-card text-income shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Income
+      </button>
     </div>
   );
 }

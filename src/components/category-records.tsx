@@ -5,7 +5,7 @@ import { useMonthRecordsQuery } from "~/lib/queries";
 import { Month } from "~/lib/routes";
 import { cn, formatEUR } from "~/lib/utils";
 import { format, parseISO } from "date-fns";
-import { CalendarDays, Euro } from "lucide-react";
+import { CalendarDays, ChevronDown, Euro } from "lucide-react";
 import { useState } from "react";
 import { AddRecordDialog } from "./add-record-dialog";
 
@@ -40,7 +40,7 @@ export function CategoryRecords({
   const [isExpanded, setIsExpanded] = useState(false);
   const [sortType, setSortType] = useState<SortType>("date"); // Default sort by date
   const { getCategoryIcon } = useCategoryIcon();
-  const { getCategoryBorderColor } = useCategoryColors();
+  const { getCategoryTileColor } = useCategoryColors();
   const IconComponent = getCategoryIcon(icon);
 
   // Only fetch records when the category is expanded
@@ -73,71 +73,81 @@ export function CategoryRecords({
   };
 
   return (
-    <div className="space-y-2">
-      <div
-        className={cn(
-          "flex justify-between items-center cursor-pointer hover:bg-[hsl(var(--glass-bg)/0.40)] p-2 pl-3 rounded-lg transition-all duration-200 border-l-4",
-          getCategoryBorderColor(categoryName)
-        )}
+    <div>
+      <button
+        type="button"
+        aria-expanded={isExpanded}
         onClick={toggleExpand}
+        className={cn(
+          "flex w-full items-center gap-3 rounded-md px-2 py-2 text-left transition-colors duration-150 hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          isExpanded && "bg-muted/50"
+        )}
       >
-        <span className="flex items-center">
-          <IconComponent className="mr-2 size-5" />
+        <span
+          className={cn(
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-md",
+            getCategoryTileColor(categoryName)
+          )}
+        >
+          <IconComponent className="size-4" />
+        </span>
+        <span className="min-w-0 flex-1 truncate text-sm font-medium">
           {categoryName}
         </span>
-        <span className="flex items-center gap-2">
-          {difference && (
-            <span className={`flex items-center text-xs ${difference.color}`}>
-              {difference.text}
-              {difference.icon}
-            </span>
-          )}
+        {difference && (
+          <span
+            className={cn(
+              "figures flex items-center text-[11px]",
+              difference.color
+            )}
+          >
+            {difference.text}
+            {difference.icon}
+          </span>
+        )}
+        <span className="figures text-sm font-medium">
           {formatEUR(totalExpenses)}
         </span>
-      </div>
+        <ChevronDown
+          className={cn(
+            "size-4 shrink-0 text-muted-foreground transition-transform duration-150",
+            isExpanded && "rotate-180"
+          )}
+        />
+      </button>
 
       {isExpanded && (
-        <div className="pl-0 space-y-2 slide-in-from-top-2 duration-200">
+        <div className="ml-6 mt-1 mb-1 space-y-1.5 border-l border-border pl-3 animate-in fade-in-0 slide-in-from-top-1 duration-150">
           {isLoading ? (
-            <div className="text-sm text-muted-foreground">
-              Loading records...
+            <div className="py-2 text-sm text-muted-foreground">
+              Loading records…
             </div>
           ) : categoryRecords.length === 0 ? (
-            <div className="text-sm text-muted-foreground">
+            <div className="py-2 text-sm text-muted-foreground">
               No records found
             </div>
           ) : (
-            <div className="space-y-2">
+            <>
               {/* Sort toggle buttons */}
-              <div className="w-full mb-2">
-                <ToggleGroup
-                  type="single"
-                  value={sortType}
-                  onValueChange={(value) => {
-                    if (value) setSortType(value as SortType);
-                  }}
-                  variant="outline"
-                  size="sm"
-                  className="w-full grid grid-cols-2 gap-0"
-                >
-                  <ToggleGroupItem
-                    value="date"
-                    aria-label="Sort by date"
-                    className="flex justify-center"
-                  >
-                    <CalendarDays className="h-4 w-4 mr-2" />
-                    Date
-                  </ToggleGroupItem>
-                  <ToggleGroupItem
-                    value="value"
-                    aria-label="Sort by value"
-                    className="flex justify-center"
-                  >
-                    <Euro className="h-4 w-4 mr-1" />
-                    Value
-                  </ToggleGroupItem>
-                </ToggleGroup>
-              </div>
+              <ToggleGroup
+                type="single"
+                value={sortType}
+                onValueChange={(value) => {
+                  if (value) setSortType(value as SortType);
+                }}
+                variant="outline"
+                size="sm"
+                className="grid w-full grid-cols-2"
+              >
+                <ToggleGroupItem value="date" aria-label="Sort by date">
+                  <CalendarDays className="h-3.5 w-3.5" />
+                  Date
+                </ToggleGroupItem>
+                <ToggleGroupItem value="value" aria-label="Sort by value">
+                  <Euro className="h-3.5 w-3.5" />
+                  Value
+                </ToggleGroupItem>
+              </ToggleGroup>
 
               {sortedCategoryRecords.map((record) => (
                 <AddRecordDialog
@@ -145,36 +155,25 @@ export function CategoryRecords({
                   recordId={record.id}
                   isIncome={!isExpense}
                   trigger={
-                    <div className="flex justify-between items-center py-2 px-3 text-sm glass-inner rounded-lg cursor-pointer hover:bg-[hsl(var(--glass-bg)/0.45)] transition-all duration-200">
-                      <div className="flex flex-col w-full">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-md text-muted-foreground">
-                              {format(
-                                parseISO(record.dateUtc),
-                                "MMM d, yyyy HH:mm"
-                              )}
-                            </span>
-                          </div>
-                          <span className="font-medium text-md">
-                            {formatEUR(record.value)}
-                          </span>
+                    <div className="flex items-center justify-between gap-3 rounded-md border border-border/70 bg-card px-3 py-2 text-left text-sm transition-colors duration-150 hover:bg-muted/60">
+                      <div className="min-w-0">
+                        <div className="truncate">
+                          {record.comment || (
+                            <span className="text-muted-foreground">No note</span>
+                          )}
                         </div>
-                        {record.comment && (
-                          <div className="mt-1">
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-secondary-foreground/90">
-                                {record.comment}
-                              </span>
-                            </div>
-                          </div>
-                        )}
+                        <div className="figures mt-0.5 text-[11px] text-muted-foreground">
+                          {format(parseISO(record.dateUtc), "MMM d, yyyy HH:mm")}
+                        </div>
                       </div>
+                      <span className="figures shrink-0 font-medium">
+                        {formatEUR(record.value)}
+                      </span>
                     </div>
                   }
                 />
               ))}
-            </div>
+            </>
           )}
         </div>
       )}

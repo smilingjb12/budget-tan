@@ -21,16 +21,21 @@ function BottomNavItem({ icon, label, isActive, onClick }: BottomNavItemProps) {
   return (
     <button
       onClick={onClick}
+      aria-current={isActive ? "page" : undefined}
       className={cn(
-        "relative flex flex-1 flex-col items-center justify-center py-2 transition-colors duration-200",
-        isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
+        "flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[11px] font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md",
+        isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
       )}
     >
-      {isActive && (
-        <div className="absolute -top-[1px] left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-primary transition-all duration-300" />
-      )}
-      <div className="mb-1">{icon}</div>
-      <span className="text-xs font-medium">{label}</span>
+      <span
+        className={cn(
+          "flex h-8 w-14 items-center justify-center rounded-full transition-colors duration-150",
+          isActive && "bg-accent"
+        )}
+      >
+        {icon}
+      </span>
+      <span>{label}</span>
     </button>
   );
 }
@@ -45,10 +50,10 @@ function MobileBottomNav() {
   const isSettings = RouteMatchers.isSettingsRoute(pathname);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 glass-strong border-t border-[hsl(var(--glass-border)/0.15)]">
-      <nav className="flex h-16 items-center justify-around px-4 relative">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 pb-safe supports-[backdrop-filter]:bg-background/85 supports-[backdrop-filter]:backdrop-blur-md">
+      <nav className="mx-auto flex h-16 max-w-xl items-center px-2">
         <BottomNavItem
-          icon={<History size={24} />}
+          icon={<History size={21} />}
           label="History"
           isActive={isHistory}
           onClick={() => {
@@ -59,13 +64,13 @@ function MobileBottomNav() {
           }}
         />
         <BottomNavItem
-          icon={<LineChart size={24} />}
+          icon={<LineChart size={21} />}
           label="Charts"
           isActive={isCharts}
           onClick={() => router.navigate({ to: Routes.charts() })}
         />
         <BottomNavItem
-          icon={<Settings2 size={24} />}
+          icon={<Settings2 size={21} />}
           label="Settings"
           isActive={isSettings}
           onClick={() => router.navigate({ to: Routes.settings() })}
@@ -77,8 +82,8 @@ function MobileBottomNav() {
 
 function AppLayout() {
   return (
-    <div className="min-h-screen pb-16 md:pb-0">
-      <div className="pt-6 pb-12 px-2">
+    <div className="min-h-screen pb-20">
+      <div className="mx-auto max-w-xl px-3 pt-5 pb-10">
         <Outlet />
       </div>
       <MobileBottomNav />
