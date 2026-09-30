@@ -5,7 +5,7 @@
 /*
  * Night ledger
  * Flat graphite surfaces, hairline borders, one saffron accent and
- * monospaced tabular figures for every amount. No blur, no glow.
+ * tabular figures for every amount. No blur, no glow.
  */
 @layer base {
   :root {
@@ -102,11 +102,11 @@
 }
 
 @layer utilities {
-  /* Amounts: monospaced, tabular so columns of money line up. */
+  /* Amounts: same face as the UI, with tabular numerals so columns of money line up. */
   .figures {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.02em;
+    font-feature-settings: "tnum", "ss01";
+    letter-spacing: -0.01em;
   }
 
   /* Small-caps style section label. */

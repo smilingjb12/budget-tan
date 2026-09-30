@@ -97,7 +97,7 @@ export function CategoryRecords({
         {difference && (
           <span
             className={cn(
-              "figures flex items-center text-[11px]",
+              "figures flex items-center text-xs",
               difference.color
             )}
           >
@@ -105,7 +105,7 @@ export function CategoryRecords({
             {difference.icon}
           </span>
         )}
-        <span className="figures text-sm font-medium">
+        <span className="figures text-[15px] font-semibold">
           {formatEUR(totalExpenses)}
         </span>
         <ChevronDown
@@ -166,7 +166,7 @@ export function CategoryRecords({
                           {format(parseISO(record.dateUtc), "MMM d, yyyy HH:mm")}
                         </div>
                       </div>
-                      <span className="figures shrink-0 font-medium">
+                      <span className="figures shrink-0 font-semibold">
                         {formatEUR(record.value)}
                       </span>
                     </div>

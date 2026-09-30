@@ -13,7 +13,6 @@ export default {
     extend: {
       fontFamily: {
         sans: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       colors: {
         border: 'hsl(var(--border))',

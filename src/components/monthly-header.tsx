@@ -35,7 +35,7 @@ export function MonthlyHeader({
             <div className="eyebrow">Balance</div>
             <div
               className={cn(
-                "figures text-lg font-semibold leading-tight",
+                "figures text-xl font-semibold leading-tight",
                 isPositiveBalance ? "text-income" : "text-expense"
               )}
             >
