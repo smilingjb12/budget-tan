@@ -122,7 +122,7 @@ export function MonthYearPicker({
           />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[320px] p-3" align="start">
+      <PopoverContent className="ink-paper w-[320px] p-3" align="start">
         <div className="mb-3 flex items-center justify-between">
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handlePreviousYear}>
             <ChevronLeft className="h-4 w-4" />
