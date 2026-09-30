@@ -66,5 +66,10 @@
     "typescript": "^5.9.3",
     "vite": "^7.3.6",
     "vite-tsconfig-paths": "^5.1.4"
+  },
+  "overrides": {
+    "nitro": {
+      "srvx": "^0.11.15"
+    }
   }
 }
