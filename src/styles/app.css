@@ -195,6 +195,43 @@
   }
 
   /*
+   * The Mincho serif sets small and thin, so the ink theme runs every text
+   * size one pixel larger. Line heights stay as they are.
+   */
+  [data-theme="ink-and-seal"] .text-\[11px\],
+  [data-theme="ink-and-seal"] .eyebrow {
+    font-size: 12px;
+  }
+
+  [data-theme="ink-and-seal"] .text-xs {
+    font-size: 13px;
+  }
+
+  [data-theme="ink-and-seal"] .text-\[13px\] {
+    font-size: 14px;
+  }
+
+  [data-theme="ink-and-seal"] .text-sm {
+    font-size: 15px;
+  }
+
+  [data-theme="ink-and-seal"] .text-\[15px\] {
+    font-size: 16px;
+  }
+
+  [data-theme="ink-and-seal"] .text-base {
+    font-size: 17px;
+  }
+
+  [data-theme="ink-and-seal"] .text-lg {
+    font-size: 19px;
+  }
+
+  [data-theme="ink-and-seal"] .text-xl {
+    font-size: 21px;
+  }
+
+  /*
    * Ink theme surfaces. Components carry these classes in every theme; they
    * only take effect under ink and seal.
    * - .ink-paper: dialogs and popovers become a torn sheet of sumi paper.
@@ -259,4 +296,18 @@
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+}
+
+/*
+ * Recharts sizes axis ticks and legends through props, so the ink theme's
+ * one-pixel bump targets its classes. Kept outside @layer so Tailwind does
+ * not prune selectors that never appear in the source.
+ */
+[data-theme="ink-and-seal"] .recharts-xAxis .recharts-cartesian-axis-tick-value,
+[data-theme="ink-and-seal"] .recharts-legend-item-text {
+  font-size: 13px;
+}
+
+[data-theme="ink-and-seal"] .recharts-yAxis .recharts-cartesian-axis-tick-value {
+  font-size: 12px;
 }
