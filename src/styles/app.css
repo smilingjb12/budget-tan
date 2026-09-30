@@ -102,11 +102,12 @@
 }
 
 @layer utilities {
-  /* Amounts: same face as the UI, with tabular numerals so columns of money line up. */
+  /* Amounts: a narrower face with tabular numerals so columns of money line up. */
   .figures {
+    font-family: "Inter Tight", system-ui, sans-serif;
     font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum", "ss01";
-    letter-spacing: -0.01em;
+    font-feature-settings: "tnum";
+    letter-spacing: 0;
   }
 
   /* Small-caps style section label. */

@@ -13,6 +13,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
+        figures: ['"Inter Tight"', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
