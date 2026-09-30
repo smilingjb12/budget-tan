@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { useIncomeTrendsQuery, IncomeTrendsDto } from "~/lib/queries";
 import { formatCurrency } from "~/lib/utils";
+import { SERIES_COLORS } from "~/lib/chart-colors";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Bar,
@@ -15,19 +16,7 @@ import {
   YAxis,
 } from "recharts";
 
-// Generate a color palette for the categories
-const COLORS = [
-  "hsl(38, 92%, 58%)",   // Saffron (primary)
-  "hsl(160, 55%, 50%)",  // Mint
-  "hsl(8, 78%, 62%)",    // Coral
-  "hsl(205, 75%, 60%)",  // Sky
-  "hsl(265, 55%, 68%)",  // Lilac
-  "hsl(48, 85%, 55%)",   // Gold
-  "hsl(335, 60%, 62%)",  // Rose
-  "hsl(95, 50%, 52%)",   // Lime
-  "hsl(235, 60%, 68%)",  // Periwinkle
-  "hsl(18, 70%, 55%)",   // Terracotta
-];
+const COLORS = SERIES_COLORS;
 
 interface IncomeDataPoint {
   name: string;

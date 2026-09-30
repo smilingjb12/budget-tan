@@ -12,6 +12,8 @@ import {
 export interface SegmentProps {
   value: number;
   color?: string;
+  /** CSS colour for the brush variant's stroke. */
+  strokeColor?: string;
   tooltip?: React.ReactNode;
   icon?: React.ReactNode;
 }
@@ -20,13 +22,18 @@ interface SegmentedProgressProps {
   segments: SegmentProps[];
   className?: string;
   height?: number;
+  /** "brush" draws each segment as a tapering ink stroke (ink theme). */
+  variant?: "solid" | "brush";
 }
 
 export function SegmentedProgress({
   segments,
   className,
   height = 24,
+  variant = "solid",
 }: SegmentedProgressProps) {
+  const isBrush = variant === "brush";
+
   // Calculate total value to determine segment widths
   const totalValue = segments.reduce((sum, segment) => sum + segment.value, 0);
 
@@ -63,12 +70,13 @@ export function SegmentedProgress({
   return (
     <div
       className={cn(
-        "relative w-full overflow-hidden rounded-md border border-border bg-muted",
+        "relative w-full overflow-hidden",
+        !isBrush && "rounded-md border border-border bg-muted",
         className
       )}
       style={{ height: `${height}px` }}
     >
-      <div className="flex h-full w-full gap-px">
+      <div className={cn("flex h-full w-full", isBrush ? "gap-1" : "gap-px")}>
         {validSegments.map((segment, index) => {
           const width = (segment.value / totalValue) * 100;
           const color =
@@ -78,20 +86,36 @@ export function SegmentedProgress({
             <TooltipProvider key={index}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div
-                    className={cn(
-                      "flex h-full items-center justify-center transition-[width] duration-300",
-                      color
-                    )}
-                    style={{
-                      width: `${width}%`,
-                      minWidth: width > 0 ? "12px" : "0", // Ensure very small segments are still visible
-                    }}
-                  >
-                    {segment.icon && width >= 5 && (
-                      <div className="text-white/90">{segment.icon}</div>
-                    )}
-                  </div>
+                  {isBrush ? (
+                    <div
+                      className="h-full transition-[width] duration-300"
+                      style={{
+                        width: `${width}%`,
+                        minWidth: "12px",
+                        color: segment.strokeColor,
+                      }}
+                    >
+                      <BrushStroke
+                        index={index}
+                        weight={Math.max(3, height * 0.6 - index)}
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className={cn(
+                        "flex h-full items-center justify-center transition-[width] duration-300",
+                        color
+                      )}
+                      style={{
+                        width: `${width}%`,
+                        minWidth: width > 0 ? "12px" : "0", // Ensure very small segments are still visible
+                      }}
+                    >
+                      {segment.icon && width >= 5 && (
+                        <div className="text-white/90">{segment.icon}</div>
+                      )}
+                    </div>
+                  )}
                 </TooltipTrigger>
                 <TooltipContent>
                   {segment.tooltip || `${segment.value} (${width.toFixed(1)}%)`}
@@ -102,5 +126,31 @@ export function SegmentedProgress({
         })}
       </div>
     </div>
+  );
+}
+
+/**
+ * One horizontal ink stroke filling its box. The curve alternates per index so
+ * neighbouring strokes don't look stamped out of the same mould; the stroke
+ * width stays in pixels however wide the segment is.
+ */
+function BrushStroke({ index, weight }: { index: number; weight: number }) {
+  const wave = index % 2 === 0 ? [-3, 3] : [3, -2];
+  return (
+    <svg
+      className="h-full w-full overflow-visible"
+      viewBox="0 0 100 20"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path
+        d={`M4 10 C30 ${10 + wave[0]}, 70 ${10 + wave[1]}, 96 10`}
+        stroke="currentColor"
+        strokeWidth={weight}
+        strokeLinecap="round"
+        fill="none"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
   );
 }

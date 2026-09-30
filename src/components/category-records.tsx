@@ -1,6 +1,6 @@
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
 import { useCategoryColors } from "~/lib/hooks/use-category-colors";
-import { useCategoryIcon } from "~/lib/hooks/use-category-icon";
+import { useIsInkTheme } from "~/lib/hooks/use-app-theme";
 import { useMonthRecordsQuery } from "~/lib/queries";
 import { Month } from "~/lib/routes";
 import { cn, formatEUR } from "~/lib/utils";
@@ -8,6 +8,7 @@ import { format, parseISO } from "date-fns";
 import { CalendarDays, ChevronDown, Euro } from "lucide-react";
 import { useState } from "react";
 import { AddRecordDialog } from "./add-record-dialog";
+import { CategoryGlyph } from "./category-glyph";
 
 // Define sort type
 type SortType = "date" | "value";
@@ -39,9 +40,8 @@ export function CategoryRecords({
 }: CategoryRecordsProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [sortType, setSortType] = useState<SortType>("date"); // Default sort by date
-  const { getCategoryIcon } = useCategoryIcon();
   const { getCategoryTileColor } = useCategoryColors();
-  const IconComponent = getCategoryIcon(icon);
+  const isInk = useIsInkTheme();
 
   // Only fetch records when the category is expanded
   const { data: records, isLoading } = useMonthRecordsQuery(
@@ -86,10 +86,17 @@ export function CategoryRecords({
         <span
           className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-md",
-            getCategoryTileColor(categoryName)
+            isInk
+              ? cn(
+                  "border",
+                  isExpanded
+                    ? "border-primary text-accent-foreground"
+                    : "border-border text-foreground"
+                )
+              : getCategoryTileColor(categoryName)
           )}
         >
-          <IconComponent className="size-4" />
+          <CategoryGlyph icon={icon} className={isInk ? "size-5" : "size-4"} />
         </span>
         <span className="min-w-0 flex-1 truncate text-sm font-medium">
           {categoryName}
@@ -163,7 +170,10 @@ export function CategoryRecords({
                           )}
                         </div>
                         <div className="figures mt-0.5 text-[11px] text-muted-foreground">
-                          {format(parseISO(record.dateUtc), "MMM d, yyyy HH:mm")}
+                          {format(
+                            parseISO(record.dateUtc),
+                            isInk ? "d'日' · HH:mm" : "MMM d, yyyy HH:mm"
+                          )}
                         </div>
                       </div>
                       <span className="figures shrink-0 font-semibold">

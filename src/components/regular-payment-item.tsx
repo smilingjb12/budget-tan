@@ -27,6 +27,9 @@ import {
 import { Edit, Trash2, Check, X } from "lucide-react";
 import { useState } from "react";
 import { usePaymentUtils } from "~/lib/hooks/use-payment-utils";
+import { useIsInkTheme } from "~/lib/hooks/use-app-theme";
+import { InkDrop } from "~/components/ink/ink-drop";
+import { cn } from "~/lib/utils";
 
 interface RegularPaymentItemProps {
   payment: RegularPaymentDto;
@@ -38,7 +41,8 @@ export function RegularPaymentItem({
   const { data: payments = [] } = useRegularPaymentsQuery();
   const updateMutation = useUpdateRegularPaymentMutation();
   const deleteMutation = useDeleteRegularPaymentMutation();
-  const { isPaymentStale, getTextColor } = usePaymentUtils();
+  const { isPaymentStale, getRelativeCost, getTextColor } = usePaymentUtils();
+  const isInk = useIsInkTheme();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -126,18 +130,32 @@ export function RegularPaymentItem({
       <CollapsibleTrigger asChild>
         <button className="w-full rounded-lg border border-border/70 bg-card px-3 py-2.5 text-left transition-colors duration-150 hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <div className="flex items-center gap-3">
-            <div
-              className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-              style={{
-                backgroundColor: getTextColor(payment.amount, payments),
-              }}
-            />
+            {isInk ? (
+              // Fixed-width slot so names line up whatever the drop's size.
+              <span className="flex w-4 flex-shrink-0 justify-center">
+                <InkDrop weight={getRelativeCost(payment.amount, payments)} />
+              </span>
+            ) : (
+              <div
+                className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                style={{
+                  backgroundColor: getTextColor(payment.amount, payments),
+                }}
+              />
+            )}
             <div className="flex-1 min-w-0">
               <div className="font-medium truncate">{payment.name}</div>
             </div>
             <div className="flex flex-col items-end">
               {isStale && (
-                <span className="rounded-sm bg-expense-muted px-1.5 text-[10px] font-semibold uppercase tracking-wide text-expense">
+                <span
+                  className={cn(
+                    "px-1.5 text-[10px] font-semibold uppercase tracking-wide",
+                    isInk
+                      ? "-rotate-3 rounded-[3px] border border-primary text-accent-foreground"
+                      : "rounded-sm bg-expense-muted text-expense"
+                  )}
+                >
                   old
                 </span>
               )}

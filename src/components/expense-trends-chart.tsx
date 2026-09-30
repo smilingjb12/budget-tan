@@ -14,6 +14,8 @@ import {
   MonthlyTotalsDto,
 } from "~/lib/queries";
 import { formatCurrency } from "~/lib/utils";
+import { useIsInkTheme } from "~/lib/hooks/use-app-theme";
+import { InkBrushBar } from "~/components/ink/brush-bar";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Bar,
@@ -60,6 +62,8 @@ export function ExpenseTrendsChart() {
     useCategoryExpensesQuery(selectedCategoryId || 0);
 
   const categoryExpenses = rawCategoryExpenses && Array.isArray(rawCategoryExpenses) ? transformMonthlyDataForChart(rawCategoryExpenses) : [];
+
+  const isInk = useIsInkTheme();
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const [visibleData, setVisibleData] = useState<typeof categoryExpenses>([]);
@@ -156,7 +160,11 @@ export function ExpenseTrendsChart() {
   const yearDividers = getYearDividers();
 
   // Function to determine color based on value
-  const getBarColor = (value: number, data: typeof categoryExpenses) => {
+  const getBarColor = (
+    value: number,
+    index: number,
+    data: typeof categoryExpenses
+  ) => {
     if (!data || data.length === 0) return "hsl(var(--primary))";
 
     const values = data.map((item) => item.total);
@@ -166,6 +174,12 @@ export function ExpenseTrendsChart() {
 
     // Normalize the value to a 0-1 scale
     const normalizedValue = range === 0 ? 0.5 : (value - minValue) / range;
+
+    // Ink: heavier ink for bigger months, the latest month in seal red.
+    if (isInk) {
+      if (index === data.length - 1) return "hsl(var(--primary))";
+      return `hsl(var(--foreground) / ${(0.3 + 0.55 * normalizedValue).toFixed(2)})`;
+    }
 
     // Define color stops for the gradient
     const colorStops = [
@@ -300,12 +314,17 @@ export function ExpenseTrendsChart() {
                       />
                     ))}
 
-                    <Bar dataKey="total" radius={[4, 4, 0, 0]} maxBarSize={40}>
+                    <Bar
+                      dataKey="total"
+                      radius={[4, 4, 0, 0]}
+                      maxBarSize={40}
+                      shape={isInk ? InkBrushBar : undefined}
+                    >
                       {categoryExpenses &&
                         categoryExpenses.map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
-                            fill={getBarColor(entry.total, categoryExpenses)}
+                            fill={getBarColor(entry.total, index, categoryExpenses)}
                           />
                         ))}
                       <LabelList

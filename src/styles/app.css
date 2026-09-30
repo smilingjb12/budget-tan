@@ -69,6 +69,70 @@
     --income-muted: 160 35% 14%;
     --expense: 8 78% 62%;
     --expense-muted: 8 40% 15%;
+    /* Series colours for stacked charts, in order. */
+    --series-1: 38 92% 58%;
+    --series-2: 160 55% 50%;
+    --series-3: 8 78% 62%;
+    --series-4: 205 75% 60%;
+    --series-5: 265 55% 68%;
+    --series-6: 48 85% 55%;
+    --series-7: 335 60% 62%;
+    --series-8: 95 50% 52%;
+    --series-9: 235 60% 68%;
+    --series-10: 18 70% 55%;
+  }
+
+  /*
+   * Ink and seal
+   * Sumi ink on black paper: cream ink, grey washes and a single vermilion
+   * hanko red. Amounts and text are set in a Mincho serif.
+   */
+  .dark[data-theme="ink-and-seal"] {
+    --background: 40 11% 5%;
+    --foreground: 40 30% 87%;
+    --card: 40 10% 6.5%;
+    --card-foreground: 40 30% 87%;
+    --popover: 36 10% 9%;
+    --popover-foreground: 40 30% 87%;
+    --primary: 3 65% 47%;
+    --primary-foreground: 30 55% 90%;
+    --secondary: 36 10% 10%;
+    --secondary-foreground: 40 25% 82%;
+    --muted: 36 11% 9%;
+    --muted-foreground: 38 8% 52%;
+    --accent: 3 40% 14%;
+    --accent-foreground: 7 70% 62%;
+    --destructive: 3 65% 52%;
+    --destructive-foreground: 30 55% 94%;
+    --border: 30 10% 15%;
+    --input: 30 10% 18%;
+    --ring: 3 65% 47%;
+    --chart-1: 40 30% 87%;
+    --chart-2: 97 25% 63%;
+    --chart-3: 7 70% 59%;
+    --chart-4: 40 12% 68%;
+    --chart-5: 38 8% 45%;
+    --income: 97 25% 63%;
+    --income-muted: 97 15% 12%;
+    --expense: 7 70% 59%;
+    --expense-muted: 7 35% 13%;
+    --series-1: 40 30% 87%;
+    --series-2: 40 18% 70%;
+    --series-3: 3 65% 50%;
+    --series-4: 38 8% 45%;
+    --series-5: 7 55% 70%;
+    --series-6: 36 9% 32%;
+    --series-7: 40 20% 76%;
+    --series-8: 3 45% 34%;
+    --series-9: 38 6% 57%;
+    --series-10: 30 8% 24%;
+    /* Brush strokes of the category bar, largest category first. */
+    --brush-1: 40 30% 87%;
+    --brush-2: 40 12% 68%;
+    --brush-3: 38 8% 45%;
+    --brush-4: 36 9% 32%;
+    --brush-5: 3 65% 47%;
+    --radius: 0.25rem;
   }
 
   * {
@@ -84,6 +148,12 @@
     font-family: "Bricolage Grotesque", system-ui, sans-serif;
     letter-spacing: -0.01em;
     font-feature-settings: "ss01";
+  }
+
+  [data-theme="ink-and-seal"] body {
+    font-family: "Zen Old Mincho", "Hiragino Mincho ProN", serif;
+    letter-spacing: 0;
+    font-feature-settings: normal;
   }
 
   .using-mouse * {
@@ -110,9 +180,39 @@
     letter-spacing: 0;
   }
 
+  [data-theme="ink-and-seal"] .figures {
+    font-family: "Zen Old Mincho", "Hiragino Mincho ProN", serif;
+  }
+
   /* Small-caps style section label. */
   .eyebrow {
     @apply text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground;
+  }
+
+  /* Icons drawn as brush strokes; the filter lives in <InkFilters />. */
+  .ink-icon {
+    --ink-accent: hsl(var(--accent-foreground));
+    filter: url(#ink-brush);
+  }
+
+  .ink-icon-on-fill {
+    --ink-accent: currentColor;
+  }
+
+  .ink-icon .ink-accent {
+    stroke: var(--ink-accent);
+  }
+
+  .ink-icon .ink-accent-fill {
+    fill: var(--ink-accent);
+    stroke: none;
+  }
+
+  /* Red hanko stamp: a slightly crooked vermilion seal with pale characters. */
+  .hanko {
+    @apply inline-flex shrink-0 select-none items-center justify-center rounded-[5px] bg-primary leading-none text-primary-foreground;
+    font-family: "Zen Old Mincho", serif;
+    rotate: -6deg;
   }
 
   .pb-safe {

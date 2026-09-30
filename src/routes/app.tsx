@@ -4,9 +4,15 @@ import { History, LineChart, Settings2 } from "lucide-react";
 import { useRouter, useLocation } from "@tanstack/react-router";
 import { RouteMatchers, Routes, type Month } from "~/lib/routes";
 import { requireAuth } from "~/server/auth";
+import { getSettings } from "~/server/settings";
+import { useIsInkTheme } from "~/lib/hooks/use-app-theme";
+import { InkFilters } from "~/components/ink/ink-filters";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => await requireAuth(),
+  // Settings only change through the theme picker, which invalidates the router.
+  loader: async () => await getSettings(),
+  staleTime: Infinity,
   component: AppLayout,
 });
 
@@ -44,6 +50,14 @@ function MobileBottomNav() {
   const router = useRouter();
   const location = useLocation();
   const pathname = location.pathname;
+  const isInk = useIsInkTheme();
+
+  // Ink theme swaps the icons for single kanji: history, chart, settings.
+  const kanjiIcon = (kanji: string) => (
+    <span aria-hidden="true" className="text-xl font-medium leading-none">
+      {kanji}
+    </span>
+  );
 
   const isHistory = RouteMatchers.isHistoryRoute(pathname);
   const isCharts = RouteMatchers.isChartsRoute(pathname);
@@ -53,7 +67,7 @@ function MobileBottomNav() {
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 pb-safe supports-[backdrop-filter]:bg-background/85 supports-[backdrop-filter]:backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-xl items-center px-2">
         <BottomNavItem
-          icon={<History size={21} />}
+          icon={isInk ? kanjiIcon("歴") : <History size={21} />}
           label="History"
           isActive={isHistory}
           onClick={() => {
@@ -64,13 +78,13 @@ function MobileBottomNav() {
           }}
         />
         <BottomNavItem
-          icon={<LineChart size={21} />}
+          icon={isInk ? kanjiIcon("図") : <LineChart size={21} />}
           label="Charts"
           isActive={isCharts}
           onClick={() => router.navigate({ to: Routes.charts() })}
         />
         <BottomNavItem
-          icon={<Settings2 size={21} />}
+          icon={isInk ? kanjiIcon("設") : <Settings2 size={21} />}
           label="Settings"
           isActive={isSettings}
           onClick={() => router.navigate({ to: Routes.settings() })}
@@ -81,8 +95,11 @@ function MobileBottomNav() {
 }
 
 function AppLayout() {
+  const isInk = useIsInkTheme();
+
   return (
     <div className="min-h-screen pb-20">
+      {isInk && <InkFilters />}
       <div className="mx-auto max-w-xl px-3 pt-5 pb-10">
         <Outlet />
       </div>

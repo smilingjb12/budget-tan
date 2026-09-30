@@ -11,12 +11,14 @@ import { CategoryProgressSection } from "./category-progress-section";
 import { CategoryRecords } from "./category-records";
 import { ViewType } from "./monthly-header";
 import LoadingIndicator from "./loading-indicator";
+import { useIsInkTheme } from "~/lib/hooks/use-app-theme";
 
 export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
   const params = useParams({ from: '/app/$year/$month' });
   const month = Number(params.month) as Month;
   const year = Number(params.year);
   const router = useRouter();
+  const isInk = useIsInkTheme();
 
   const { prevMonth, prevYear, nextMonth, nextYear } = useMonthNavigation(
     month,
@@ -175,8 +177,15 @@ export function MonthlySummaryCard({ viewType }: { viewType: ViewType }) {
           <ChevronLeft className="h-5 w-5" />
         </Button>
         <CardTitle className="flex flex-col items-center justify-center gap-1.5">
-          <span className="figures text-3xl font-semibold tracking-tight">
-            {formatEUR(totalMonthlyAmount)}
+          <span className="flex items-center gap-2.5">
+            <span className="figures text-3xl font-semibold tracking-tight">
+              {formatEUR(totalMonthlyAmount)}
+            </span>
+            {isInk && (
+              <span aria-hidden="true" className="hanko h-9 w-9 text-[13px]">
+                {viewType === "expenses" ? "支出" : "収入"}
+              </span>
+            )}
           </span>
           {monthDiff ? (
             <span

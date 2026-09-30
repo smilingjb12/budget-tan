@@ -69,3 +69,9 @@ export const balance = pgTable("balance", {
   updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
+
+export const appSettings = pgTable("appSettings", {
+  id: serial().primaryKey(),
+  theme: text().notNull().default("night-ledger"),
+  updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+});

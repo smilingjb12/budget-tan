@@ -3,6 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { useMonthlyExpensesVsIncomeQuery, MonthlyExpensesVsIncomeDto } from "~/lib/queries";
 import { formatCurrency } from "~/lib/utils";
+import { useIsInkTheme } from "~/lib/hooks/use-app-theme";
+import { InkBrushBar } from "~/components/ink/brush-bar";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Bar,
@@ -56,6 +58,7 @@ function transformMonthlyExpensesVsIncomeForChart(data: MonthlyExpensesVsIncomeD
 
 export function ExpensesVsIncomeChart() {
   const { data: rawExpensesVsIncome, isLoading } = useMonthlyExpensesVsIncomeQuery();
+  const isInk = useIsInkTheme();
   const [hasInitiallyScrolled, setHasInitiallyScrolled] = useState(false);
 
   // Add difference calculation to the data
@@ -250,6 +253,7 @@ export function ExpensesVsIncomeChart() {
                     dataKey="absoluteDifference"
                     radius={[4, 4, 0, 0]}
                     maxBarSize={40}
+                    shape={isInk ? InkBrushBar : undefined}
                   >
                     {expensesVsIncome && expensesVsIncome.map((entry, index) => (
                       <Cell

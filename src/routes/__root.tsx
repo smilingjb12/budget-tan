@@ -9,6 +9,7 @@ import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
 import appCss from "~/styles/app.css?url";
 import { seo } from "~/utils/seo";
+import { useAppTheme } from "~/lib/hooks/use-app-theme";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -47,7 +48,7 @@ export const Route = createRootRoute({
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Inter+Tight:wght@500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Inter+Tight:wght@500;600;700&family=Zen+Old+Mincho:wght@400;500;700&display=swap",
       },
       { rel: "stylesheet", href: appCss },
       {
@@ -83,6 +84,7 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const theme = useAppTheme();
   const clerkAppearance = {
     theme: dark,
     variables: {
@@ -99,7 +101,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
   return (
     <ClerkProvider appearance={clerkAppearance}>
-      <html className="dark">
+      <html className="dark" data-theme={theme}>
         <head>
           <HeadContent />
         </head>

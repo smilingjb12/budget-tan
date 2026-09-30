@@ -17,7 +17,8 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { useCategoryIcon } from "~/lib/hooks/use-category-icon";
+import { useIsInkTheme } from "~/lib/hooks/use-app-theme";
+import { CategoryGlyph } from "~/components/category-glyph";
 import { useDebounce } from "~/lib/hooks/use-debounce";
 import { usePreviousMonth } from "~/lib/hooks/use-month-navigation";
 import {
@@ -31,6 +32,7 @@ import {
 } from "~/lib/queries";
 import { QueryKeys } from "~/lib/query-keys";
 import { Month } from "~/lib/routes";
+import { cn } from "~/lib/utils";
 import { CreateOrUpdateRecordRequest } from "~/services/record-service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -79,7 +81,7 @@ export function AddRecordDialog({
   const year = Number(params.year);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { getCategoryIcon } = useCategoryIcon();
+  const isInk = useIsInkTheme();
   const { prevMonth, prevYear } = usePreviousMonth(month, year);
   const isEditMode = !!recordId;
 
@@ -556,7 +558,7 @@ export function AddRecordDialog({
                   >
                     {isEditMode
                       ? `Update${eurValue ? ` (€${eurValue})` : ""}`
-                      : `Add${eurValue ? ` (€${eurValue})` : ""}`}
+                      : `${isInk ? "記 " : ""}Add${eurValue ? ` (€${eurValue})` : ""}`}
                   </ActionButton>
                 </div>
                 <FormField
@@ -576,9 +578,6 @@ export function AddRecordDialog({
                         <FormControl>
                           <div className="mx-auto mt-2 grid w-fit grid-cols-3 gap-1.5">
                             {categories?.map((category) => {
-                              const IconComponent = getCategoryIcon(
-                                category.icon
-                              );
                               const isSelected =
                                 category.id.toString() === field.value;
 
@@ -597,7 +596,11 @@ export function AddRecordDialog({
                                   title={category.name}
                                   disabled={isSelected} // Disable button if already selected to prevent untoggling
                                 >
-                                  <IconComponent className="h-7 w-7" />
+                                  <CategoryGlyph
+                                    icon={category.icon}
+                                    className="h-7 w-7"
+                                    onFill={isSelected}
+                                  />
                                 </button>
                               );
                             })}
@@ -648,7 +651,11 @@ export function AddRecordDialog({
       <DialogTrigger asChild>
         <Button
           size="icon"
-          className="h-14 w-14 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-transform duration-150 hover:bg-primary/90 hover:scale-105 active:scale-95"
+          className={cn(
+            "h-14 w-14 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-transform duration-150 hover:bg-primary/90 hover:scale-105 active:scale-95",
+            // Ink: a red hanko stamp rather than a floating pill.
+            isInk && "hanko h-14 w-14 rounded-md text-2xl shadow-black/40"
+          )}
           aria-label={
             isEditMode
               ? "Edit record"
@@ -659,6 +666,8 @@ export function AddRecordDialog({
         >
           {isEditMode ? (
             <PencilIcon className="h-6 w-6" />
+          ) : isInk ? (
+            <span aria-hidden="true">記</span>
           ) : (
             <Plus className="h-6 w-6" />
           )}
@@ -782,7 +791,7 @@ export function AddRecordDialog({
                 >
                   {isEditMode
                     ? `Update${eurValue ? ` (€${eurValue})` : ""}`
-                    : `Add${eurValue ? ` (€${eurValue})` : ""}`}
+                    : `${isInk ? "記 " : ""}Add${eurValue ? ` (€${eurValue})` : ""}`}
                 </ActionButton>
               </div>
               <FormField
@@ -802,9 +811,6 @@ export function AddRecordDialog({
                       <FormControl>
                         <div className="mx-auto mt-2 grid w-fit grid-cols-3 gap-1.5">
                           {categories?.map((category) => {
-                            const IconComponent = getCategoryIcon(
-                              category.icon
-                            );
                             const isSelected =
                               category.id.toString() === field.value;
 
@@ -823,7 +829,11 @@ export function AddRecordDialog({
                                 title={category.name}
                                 disabled={isSelected} // Disable button if already selected to prevent untoggling
                               >
-                                <IconComponent className="h-7 w-7" />
+                                <CategoryGlyph
+                                    icon={category.icon}
+                                    className="h-7 w-7"
+                                    onFill={isSelected}
+                                  />
                               </button>
                             );
                           })}

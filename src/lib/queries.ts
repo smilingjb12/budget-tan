@@ -19,6 +19,9 @@ import {
   getExpensesVsIncome,
 } from "~/server/records";
 import { getBalance, setBalance } from "~/server/balance";
+import { setTheme } from "~/server/settings";
+import { useRouter } from "@tanstack/react-router";
+import type { ThemeId } from "~/lib/themes";
 import { getExchangeRate } from "~/server/exchange-rate";
 import {
   getRegularPayments,
@@ -146,6 +149,27 @@ export function useSetBalanceMutation() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.balance() });
+    },
+  });
+}
+
+// Theme lives in the /app route loader (so SSR paints it), not in the query
+// cache, so saving it reloads the router instead of invalidating a query.
+export function useSetThemeMutation() {
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async (theme: ThemeId) => {
+      const settings = await setTheme({ data: { theme } });
+      // A failed request can come back without throwing; only trust the
+      // settings the server echoes back.
+      if (settings?.theme !== theme) {
+        throw new Error("Theme was not saved");
+      }
+      return settings;
+    },
+    onSuccess: async () => {
+      await router.invalidate();
     },
   });
 }

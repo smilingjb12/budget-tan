@@ -8,16 +8,22 @@ export const usePaymentUtils = () => {
     return new Date(lastModified) < thirtyDaysAgo;
   };
 
-  const getTextColor = (value: number, data: RegularPaymentDto[]) => {
-    if (!data || data.length === 0) return "hsl(var(--primary))";
+  /** Where a payment's amount sits between the cheapest (0) and dearest (1). */
+  const getRelativeCost = (value: number, data: RegularPaymentDto[]) => {
+    if (!data || data.length === 0) return 0.5;
 
     const values = data.map((item: RegularPaymentDto) => item.amount);
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
     const range = maxValue - minValue;
 
-    // Normalize the value to a 0-1 scale
-    const normalizedValue = range === 0 ? 0.5 : (value - minValue) / range;
+    return range === 0 ? 0.5 : (value - minValue) / range;
+  };
+
+  const getTextColor = (value: number, data: RegularPaymentDto[]) => {
+    if (!data || data.length === 0) return "hsl(var(--primary))";
+
+    const normalizedValue = getRelativeCost(value, data);
 
     // Define color stops for the gradient
     const colorStops = [
@@ -62,6 +68,7 @@ export const usePaymentUtils = () => {
 
   return {
     isPaymentStale,
+    getRelativeCost,
     getTextColor,
   };
 };
