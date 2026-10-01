@@ -24,6 +24,8 @@ interface BottomNavItemProps {
 }
 
 function BottomNavItem({ icon, label, isActive, onClick }: BottomNavItemProps) {
+  const isInk = useIsInkTheme();
+
   return (
     <button
       onClick={onClick}
@@ -41,7 +43,8 @@ function BottomNavItem({ icon, label, isActive, onClick }: BottomNavItemProps) {
       >
         {icon}
       </span>
-      <span>{label}</span>
+      {/* Ink theme: the kanji alone, the label stays for screen readers. */}
+      <span className={cn(isInk && "sr-only")}>{label}</span>
     </button>
   );
 }

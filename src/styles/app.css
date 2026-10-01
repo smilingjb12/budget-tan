@@ -116,9 +116,11 @@
     --income-muted: 97 15% 12%;
     --expense: 7 70% 59%;
     --expense-muted: 7 35% 13%;
-    --series-1: 40 30% 87%;
-    --series-2: 40 18% 70%;
-    --series-3: 3 65% 50%;
+    /* Vermilion first so two-series stacks (income: gift + paycheck) read as
+       red over cream rather than two near-identical creams. */
+    --series-1: 3 65% 50%;
+    --series-2: 40 30% 87%;
+    --series-3: 40 18% 70%;
     --series-4: 38 8% 45%;
     --series-5: 7 55% 70%;
     --series-6: 36 9% 32%;
@@ -265,6 +267,12 @@
   /* Beats the parents' space-y-* gaps. */
   html[data-theme="ink-and-seal"] .ink-card ~ .ink-card {
     margin-top: 1.5rem;
+  }
+
+  /* Clicking a chart focuses its SVG, which draws a large white outline. */
+  [data-theme="ink-and-seal"] .recharts-wrapper,
+  [data-theme="ink-and-seal"] .recharts-wrapper * {
+    outline: none;
   }
 
   /* Icons drawn as brush strokes; the filter lives in <InkFilters />. */
