@@ -1,6 +1,5 @@
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import { defineConfig } from 'vite'
-import tsConfigPaths from 'vite-tsconfig-paths'
 import viteReact from '@vitejs/plugin-react'
 import { nitro } from 'nitro/vite'
 
@@ -21,23 +20,18 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  resolve: {
+    tsconfigPaths: true,
+  },
   // Keep node-postgres out of server bundles; pg 8.20's ESM wrapper breaks when inlined.
   ssr: {
     external: serverExternalDeps,
   },
   plugins: [
-    tsConfigPaths({
-      projects: ['./tsconfig.json'],
-    }),
     tanstackStart(),
     viteReact(),
     nitro({
-      config: {
-        noExternals: false,
-        externals: {
-          external: serverExternalDeps,
-        },
-      },
+      traceDeps: serverExternalDeps,
     }),
   ],
   define: {

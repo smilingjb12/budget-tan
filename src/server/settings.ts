@@ -20,7 +20,7 @@ export const setTheme = createServerFn({
   method: "POST",
 })
   .middleware([authMiddleware])
-  .inputValidator(setThemeSchema)
+  .validator(setThemeSchema)
   .handler(async ({ data }) => {
     await SettingsService.setTheme(data.theme);
     return await SettingsService.get();
