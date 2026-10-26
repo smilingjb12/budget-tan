@@ -19,7 +19,7 @@ export const setBalance = createServerFn({
   method: "POST",
 })
   .middleware([authMiddleware])
-  .inputValidator(setBalanceSchema)
+  .validator(setBalanceSchema)
   .handler(async ({ data }) => {
     await BalanceService.overwrite(data.value);
     return await BalanceService.get();

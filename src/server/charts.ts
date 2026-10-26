@@ -10,7 +10,7 @@ const categoryIdSchema = z.object({
 
 export const getCategoryExpenses = createServerFn({ method: 'GET' })
   .middleware([authMiddleware])
-  .inputValidator(categoryIdSchema)
+  .validator(categoryIdSchema)
   .handler(async ({ data: { categoryId } }) => {
     return await ChartsService.getMonthlyTotalsByCategory(categoryId)
   })
@@ -43,7 +43,7 @@ const expensesByItemsSchema = z.object({
 
 export const getExpensesByItems = createServerFn({ method: 'GET' })
   .middleware([authMiddleware])
-  .inputValidator(expensesByItemsSchema)
+  .validator(expensesByItemsSchema)
   .handler(async ({ data: { items } }) => {
     return await ChartsService.getExpensesByItems(items)
   })
