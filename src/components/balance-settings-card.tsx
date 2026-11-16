@@ -63,15 +63,18 @@ export function BalanceSettingsCard() {
             <div className="space-y-2">
               <Label htmlFor="balance-input">New value (EUR)</Label>
               <div className="flex gap-2">
-                <Input
-                  id="balance-input"
-                  type="number"
-                  inputMode="decimal"
-                  step="0.01"
-                  placeholder="0.00"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                />
+                {/* Input's own wrapper has no width; without this the font decides it. */}
+                <div className="flex-1">
+                  <Input
+                    id="balance-input"
+                    type="number"
+                    inputMode="decimal"
+                    step="0.01"
+                    placeholder="0.00"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                  />
+                </div>
                 <Button
                   disabled={!isValid || setBalance.isPending}
                   onClick={() => setConfirmOpen(true)}

@@ -73,7 +73,7 @@ function ThemePreview({ themeId }: { themeId: ThemeId }) {
         style={{
           background: "#0F0E0C",
           color: "#E8E2D6",
-          fontFamily: '"Zen Old Mincho", serif',
+          fontFamily: '"Noto Serif JP", serif',
         }}
       >
         <div

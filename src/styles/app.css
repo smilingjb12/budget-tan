@@ -85,7 +85,8 @@
   /*
    * Ink and seal
    * Sumi ink on black paper: cream ink, grey washes and a single vermilion
-   * hanko red. Amounts and text are set in a Mincho serif.
+   * hanko red. Amounts and text are set in Noto Serif JP, a sturdy Mincho
+   * that stays legible at small sizes; the hanko seals keep Zen Old Mincho.
    */
   .dark[data-theme="ink-and-seal"] {
     --background: 40 11% 5%;
@@ -158,7 +159,8 @@
   }
 
   [data-theme="ink-and-seal"] body {
-    font-family: "Zen Old Mincho", "Hiragino Mincho ProN", serif;
+    font-family: "Noto Serif JP", "Hiragino Mincho ProN", serif;
+    font-weight: 500;
     letter-spacing: 0;
     font-feature-settings: normal;
   }
@@ -188,7 +190,8 @@
   }
 
   [data-theme="ink-and-seal"] .figures {
-    font-family: "Zen Old Mincho", "Hiragino Mincho ProN", serif;
+    font-family: "Noto Serif JP", "Hiragino Mincho ProN", serif;
+    font-variant-numeric: tabular-nums lining-nums;
   }
 
   /* Small-caps style section label. */
@@ -197,7 +200,7 @@
   }
 
   /*
-   * The Mincho serif sets small and thin, so the ink theme runs every text
+   * The serif sets smaller than the grotesque, so the ink theme runs every text
    * size one pixel larger. Line heights stay as they are.
    */
   [data-theme="ink-and-seal"] .text-\[11px\],
