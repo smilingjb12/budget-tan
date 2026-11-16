@@ -70,3 +70,20 @@ pnpm dev
 
 > [!WARNING]
 > You will need to update the `docs/config.json` file (in the project's repo) if you add a new doc page!
+
+## Running locally with mock data
+
+To check the UI without real data or Clerk credentials:
+
+```sh
+# a throwaway local Postgres, e.g. docker run -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:16
+export DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
+npm run migrate
+npm run seed:mock               # or: npm run seed:mock -- --theme=night-ledger
+VITE_MOCK_AUTH=true npm run dev
+```
+
+`seed:mock` wipes and refills records, balance, regular payments and the
+theme setting with deterministic sample data, and refuses to run against a
+non-localhost database. `VITE_MOCK_AUTH=true` skips Clerk and signs every
+request in as a fixed local user; it only works in the dev server.

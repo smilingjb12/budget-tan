@@ -10,6 +10,7 @@ import { NotFound } from "~/components/NotFound";
 import appCss from "~/styles/app.css?url";
 import { seo } from "~/utils/seo";
 import { useAppTheme } from "~/lib/hooks/use-app-theme";
+import { isMockAuth } from "~/lib/mock-auth";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -99,20 +100,24 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     },
   };
 
-  return (
-    <ClerkProvider appearance={clerkAppearance}>
-      <html className="dark" data-theme={theme}>
-        <head>
-          <HeadContent />
-        </head>
-        <body>
-          <QueryClientProvider client={queryClient}>
-            {children}
-            <TanStackRouterDevtools position="bottom-right" />
-          </QueryClientProvider>
-          <Scripts />
-        </body>
-      </html>
-    </ClerkProvider>
+  const page = (
+    <html className="dark" data-theme={theme}>
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <QueryClientProvider client={queryClient}>
+          {children}
+          <TanStackRouterDevtools position="bottom-right" />
+        </QueryClientProvider>
+        <Scripts />
+      </body>
+    </html>
+  );
+
+  return isMockAuth ? (
+    page
+  ) : (
+    <ClerkProvider appearance={clerkAppearance}>{page}</ClerkProvider>
   );
 }
