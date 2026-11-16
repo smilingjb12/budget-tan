@@ -87,3 +87,7 @@ VITE_MOCK_AUTH=true npm run dev
 theme setting with deterministic sample data, and refuses to run against a
 non-localhost database. `VITE_MOCK_AUTH=true` skips Clerk and signs every
 request in as a fixed local user; it only works in the dev server.
+
+With the dev server running, `node scripts/mock-screenshots.mjs [outDir]`
+saves phone-width screenshots of the month (plain and with a category
+expanded), charts and settings pages. It needs Playwright with Chromium.
